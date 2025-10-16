@@ -4,6 +4,8 @@
 import './App.css'
 import './pages/LandingPage'
 import { LandingPage } from './pages/LandingPage'
+import './styles/style.css'
+
 function App() {
 
   return <LandingPage onGetStarted={() => {}} onLogin={() => {}} />;
