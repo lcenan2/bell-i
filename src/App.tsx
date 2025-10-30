@@ -1,15 +1,33 @@
 // import { useState } from 'react'
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
+import React, { useEffect, useState } from 'react'
 import './App.css'
-import './pages/LandingPage'
-import { LandingPage } from './pages/LandingPage'
 import './styles/style.css'
-//import RestaurantList from './components/restaurantList'
+import { LandingPage } from './pages/LandingPage'
+import Login from './pages/Login'
 
 function App() {
-  //return <RestaurantList />; 
-  return <LandingPage onGetStarted={() => {}} onLogin={() => {}} />;
+  const [path, setPath] = useState(window.location.pathname)
+
+  useEffect(() => {
+    const onPop = () => setPath(window.location.pathname)
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
+  }, [])
+
+  const navigate = (to: string) => {
+    if (window.location.pathname !== to) {
+      window.history.pushState(null, '', to)
+      setPath(to)
+    }
+  }
+
+  if (path === '/login') {
+    return <Login onBack={() => navigate('/')} />
+  }
+
+  return <LandingPage onGetStarted={() => navigate('/login')} onLogin={() => navigate('/login')} />
 }
 
 export default App
