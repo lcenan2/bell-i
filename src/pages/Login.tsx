@@ -41,7 +41,7 @@ export default function Login({ onBack }: { onBack?: () => void }) {
         // Optionally redirect to profile creation:
         // window.history.pushState(null, '', '/create-profile');
         // window.dispatchEvent(new PopStateEvent('popstate'));
-      }
+      //}
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       setError(msg || 'Sign in failed');

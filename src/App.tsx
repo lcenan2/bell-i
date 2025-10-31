@@ -1,11 +1,11 @@
-// import { useState } from 'react'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from '/vite.svg'
+// App.tsx
 import React, { useEffect, useState } from 'react'
-import './App.css'
 import './styles/style.css'
 import { LandingPage } from './pages/LandingPage'
 import Login from './pages/Login'
+import { RestaurantDetails } from './pages/RestaurantDetail'
+import { restaurants } from './data/Restaurants' // array of Restaurant
+
 
 function App() {
   const [path, setPath] = useState(window.location.pathname)
@@ -20,6 +20,7 @@ function App() {
     if (window.location.pathname !== to) {
       window.history.pushState(null, '', to)
       setPath(to)
+      window.scrollTo(0, 0)
     }
   }
 
@@ -27,7 +28,34 @@ function App() {
     return <Login onBack={() => navigate('/')} />
   }
 
-  return <LandingPage onGetStarted={() => navigate('/login')} onLogin={() => navigate('/login')} />
+  const match = path.match(/^\/restaurant\/([^/]+)$/)
+  if (match) {
+    // If your Restaurant.id is a number:
+    const id = decodeURIComponent(match[1])
+    const restaurant = restaurants.find(r => r.id === id)
+
+    // If your Restaurant.id is a string, use:
+    // const idStr = decodeURIComponent(match[1])
+    // const restaurant = restaurants.find(r => r.id === idStr)
+
+    if (!restaurant) {
+      return (
+        <div className="p-6">
+          <button onClick={() => navigate('/')} className="underline">Back</button>
+          <p className="mt-4">Restaurant not found.</p>
+        </div>
+      )
+    }
+    return <RestaurantDetails restaurant={restaurant} onBack={() => navigate('/')} />
+  }
+
+  return (
+    <LandingPage
+      onGetStarted={() => navigate('/login')}
+      onLogin={() => navigate('/login')}
+      onOpenRestaurant={(id: string | number) => navigate(`/restaurant/${id}`)}
+    />
+  )
 }
 
 export default App
