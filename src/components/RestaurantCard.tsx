@@ -31,6 +31,8 @@ export function RestaurantCard({
       className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
       onClick={onClick}
     >
+      <h3 className="truncate text-base font-semibold">{name}</h3>
+
       <div className="aspect-video w-full overflow-hidden">
         <ImageWithFallback 
           src={imageUrl} 
