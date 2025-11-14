@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import './styles/style.css'
 import { LandingPage } from './pages/LandingPage'
 import Login from './pages/Login'
+import SignUp from './pages/SignUp'
 import { RestaurantDetails } from './pages/RestaurantDetail'
 import { restaurants } from './data/Restaurants' // array of Restaurant
 
@@ -26,6 +27,10 @@ function App() {
 
   if (path === '/login') {
     return <Login onBack={() => navigate('/')} />
+  }
+
+  if (path === '/signup') {
+    return <SignUp onBack={() => navigate('/')} />
   }
 
   const match = path.match(/^\/restaurant\/([^/]+)$/)
