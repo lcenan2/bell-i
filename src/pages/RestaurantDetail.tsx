@@ -1,12 +1,22 @@
 // src/pages/RestaurantDetail.tsx
 import type { Restaurant } from "../data/Restaurants";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/Card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../components/Card";
 import { Button } from "../components/Button";
 import { ImageWithFallback } from "../components/ImageWithFallback";
 import { MapPin, Star, DollarSign, ArrowLeft } from "lucide-react";
 import RatingForm from "../components/RatingForm";
 import { fetchRatings, saveRating, computeAverages } from "../services/ratings";
 import { useEffect, useMemo, useState } from "react";
+
+// NEW imports for dishes:
+import { dishes as allDishes } from "../data/Dish";
+import { addDishRating, getDishStatsForRestaurant } from "../services/dishRating";
 
 export interface RestaurantDetailsProps {
   restaurant: Restaurant;
@@ -18,6 +28,22 @@ export function RestaurantDetails({ restaurant, onBack }: RestaurantDetailsProps
   const [ratings, setRatings] = useState<any[]>([]);
   const stats = useMemo(() => computeAverages(ratings as any), [ratings]);
 
+  // --- new state for dish ratings ---
+  const [dishStats, setDishStats] = useState<
+    Record<string, { avg: number; count: number }>
+  >({});
+
+  // menu for this restaurant
+  const menu = useMemo(
+    () => allDishes.filter((d) => d.restaurantId === restaurant.id),
+    [restaurant.id]
+  );
+
+  function refreshDishStats() {
+    const s = getDishStatsForRestaurant(restaurant.id);
+    setDishStats(s);
+  }
+
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -27,6 +53,8 @@ export function RestaurantDetails({ restaurant, onBack }: RestaurantDetailsProps
         setRatings(rs);
         setLoading(false);
       }
+      // load dish stats from localStorage
+      refreshDishStats();
     })();
     return () => {
       mounted = false;
@@ -34,15 +62,23 @@ export function RestaurantDetails({ restaurant, onBack }: RestaurantDetailsProps
   }, [restaurant.id]);
 
   async function handleSubmit(values: {
-    taste: number; price: number; location: number; environment: number; comment: string;
+    taste: number;
+    price: number;
+    location: number;
+    environment: number;
+    comment: string;
   }) {
     await saveRating({
       restaurantId: restaurant.id,
       ...values,
     });
-    // re-fetch to update averages
     const rs = await fetchRatings(restaurant.id);
     setRatings(rs);
+  }
+
+  function handleDishRate(dishId: string, value: number) {
+    addDishRating({ dishId, restaurantId: restaurant.id, value });
+    refreshDishStats();
   }
 
   return (
@@ -57,7 +93,7 @@ export function RestaurantDetails({ restaurant, onBack }: RestaurantDetailsProps
       </header>
 
       <main className="container mx-auto grid gap-6 px-4 py-6 md:grid-cols-3">
-        {/* Left: hero + info */}
+        {/* Left: hero + info + menu */}
         <section className="md:col-span-2 space-y-4">
           <Card>
             <CardHeader>
@@ -65,7 +101,9 @@ export function RestaurantDetails({ restaurant, onBack }: RestaurantDetailsProps
                 <span>{restaurant.name}</span>
                 <span className="flex items-center gap-2 text-sm font-normal">
                   <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-                  <span>{stats.avg.toFixed(1)} ({stats.count})</span>
+                  <span>
+                    {stats.avg.toFixed(1)} ({stats.count})
+                  </span>
                 </span>
               </CardTitle>
               <CardDescription>{restaurant.cuisine}</CardDescription>
@@ -109,6 +147,36 @@ export function RestaurantDetails({ restaurant, onBack }: RestaurantDetailsProps
               )}
             </CardContent>
           </Card>
+
+          {/* NEW: Menu (dishes) */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Menu</CardTitle>
+              <CardDescription>Rate your favorite dishes</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {menu.length === 0 ? (
+                <p className="text-sm text-gray-500">
+                  No dishes yet for this restaurant.
+                </p>
+              ) : (
+                <div className="grid sm:grid-cols-2 gap-4">
+                  {menu.map((dish) => {
+                    const stat = dishStats[dish.id] || { avg: 0, count: 0 };
+                    return (
+                      <DishRow
+                        key={dish.id}
+                        dish={dish}
+                        avg={stat.avg}
+                        count={stat.count}
+                        onRate={handleDishRate}
+                      />
+                    );
+                  })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </section>
 
         {/* Right: rating form */}
@@ -142,3 +210,72 @@ export function RestaurantDetails({ restaurant, onBack }: RestaurantDetailsProps
   );
 }
 
+interface DishRowProps {
+  dish: {
+    id: string;
+    name: string;
+    description?: string;
+    priceCents?: number;
+    photoUrl?: string;
+  };
+  avg: number;
+  count: number;
+  onRate: (dishId: string, value: number) => void;
+}
+
+function DishRow({ dish, avg, count, onRate }: DishRowProps) {
+  const [value, setValue] = useState(5);
+
+  return (
+    <div className="border rounded-lg overflow-hidden">
+      {dish.photoUrl && (
+        <img
+          src={dish.photoUrl}
+          alt={dish.name}
+          className="w-full h-32 object-cover"
+        />
+      )}
+      <div className="p-3 space-y-2">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="font-semibold text-sm">{dish.name}</div>
+            {dish.description && (
+              <div className="text-xs text-gray-600">{dish.description}</div>
+            )}
+          </div>
+          <div className="text-xs text-gray-700 text-right">
+            <div className="flex items-center gap-1 justify-end">
+              <Star className="h-3 w-3 text-yellow-400 fill-yellow-400" />
+              <span>{avg.toFixed(1)}</span>
+            </div>
+            <div className="text-[11px] text-gray-500">
+              {count} rating{count === 1 ? "" : "s"}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 text-xs">
+          <span>Your rating:</span>
+          <select
+            className="border rounded px-1 py-[2px]"
+            value={value}
+            onChange={(e) => setValue(Number(e.target.value))}
+          >
+            {[1, 2, 3, 4, 5].map((n) => (
+              <option key={n} value={n}>
+                {n}
+              </option>
+            ))}
+          </select>
+          <Button
+            size="sm"
+            className="ml-auto"
+            onClick={() => onRate(dish.id, value)}
+          >
+            Submit
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
