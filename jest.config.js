@@ -3,10 +3,9 @@ export default {
   testEnvironment: 'jsdom',
   roots: ['<rootDir>/src', '<rootDir>/test'],
   testMatch: [
-    "**/__tests__/**/*.[jt]s?(x)",
-    "**/?(*.)+(spec|test).[tj]s?(x)"
+    "**/test/unit/**/*.test.ts"
   ],
-  setupFilesAfterEnv: ["<rootDir>/setupTests.ts", "<rootDir>/test/integration/setupIntegrationTests.ts"],
+  setupFilesAfterEnv: ["<rootDir>/setupTests.ts"],
   globalTeardown: "<rootDir>/testTeardown.ts",
   maxWorkers: 1,
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],

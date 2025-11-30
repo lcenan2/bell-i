@@ -8,5 +8,5 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "setupTests.ts"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "setupTests.ts", "test/unit/auth.test.ts", "test/unit/firestore.test.ts", "test/unit/authService.test.ts", "tests/unit/authService.test.ts"]
 }

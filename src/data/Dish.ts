@@ -1,4 +1,3 @@
-
 export type ID = string;
 
 export interface Dish {
@@ -11,24 +10,24 @@ export interface Dish {
   createdAt: number; // epoch ms
 }
 
-export interface DishFeedback { // both ratings & likes live here
+export interface DishFeedback {
   id: ID;
   dishId: ID;
   restaurantId: ID;
   userId: ID;
-  rating?: number;   // 1..5 optional (likes have no rating)
-  liked?: boolean;   // true if a "heart" click
+  rating?: number;
+  liked?: boolean;
   comment?: string;
-  createdAt: number; // epoch ms for weekly windows
+  createdAt: number;
 }
 
-export interface DishStats { // computed client-side
+export interface DishStats {
   dishId: ID;
   restaurantId: ID;
-  avgRating: number;   // 0..5
+  avgRating: number;
   ratingCount: number;
   likeCount: number;
-  score: number;       // blended score we sort by
+  score: number;
 }
 
 export const dishes: Dish[] = [
@@ -38,59 +37,91 @@ export const dishes: Dish[] = [
     restaurantId: "1",
     name: "Carne Asada Burrito",
     description: "Grilled steak, rice, beans, pico de gallo.",
-    priceCents: 1299,
+    priceCents: 12.99,
     photoUrl:
       "https://images.unsplash.com/photo-1601924582971-c7c3c5df63f0?q=80&w=1974&auto=format&fit=crop",
-    createdAt: Date.now() - 6 * 24 * 60 * 60 * 1000, // ~6 days ago
+    createdAt: Date.now() - 6 * 24 * 60 * 60 * 1000,
   },
   {
     id: "d2",
     restaurantId: "1",
     name: "California Burrito",
     description: "Steak, fries, cheese, and salsa.",
-    priceCents: 1399,
+    priceCents: 13.99,
     photoUrl:
       "https://images.unsplash.com/photo-1625944520715-d2f1c4e6a2a5?q=80&w=1974&auto=format&fit=crop",
     createdAt: Date.now() - 5 * 24 * 60 * 60 * 1000,
   },
   {
-  id: "d3",
+    id: "d3",
     restaurantId: "1",
     name: "Chicken Quesadilla",
     description: "Large flour tortilla, grilled chicken, cheese.",
-    priceCents: 999,
+    priceCents: 9.99,
     photoUrl:
       "https://images.unsplash.com/photo-1598866215963-d5046ed6a9c0?q=80&w=1974&auto=format&fit=crop",
     createdAt: Date.now() - 4 * 24 * 60 * 60 * 1000,
   },
 
-  // ----- Jurassic Grill (restaurantId = "3") -----
+  // ----- Chopstixs (restaurantId = "2") -----
   {
     id: "d4",
+    restaurantId: "2",
+    name: "Kung Pao Chicken",
+    description: "Spicy stir-fried chicken with peanuts and vegetables.",
+    priceCents: 12.99,
+    photoUrl:
+      "https://images.unsplash.com/photo-1604908177522-2bfcfd7020b6?q=80&w=1974&auto=format&fit=crop",
+    createdAt: Date.now() - 3 * 24 * 60 * 60 * 1000,
+  },
+  {
+    id: "d5",
+    restaurantId: "2",
+    name: "Beef Chow Mein",
+    description: "Stir-fried noodles with beef and vegetables.",
+    priceCents: 11.99,
+    photoUrl:
+      "https://images.unsplash.com/photo-1604908177523-5a6e9c48b1b1?q=80&w=1974&auto=format&fit=crop",
+    createdAt: Date.now() - 2 * 24 * 60 * 60 * 1000,
+  },
+  {
+    id: "d6",
+    restaurantId: "2",
+    name: "Vegetable Spring Rolls",
+    description: "Crispy rolls filled with fresh vegetables.",
+    priceCents: 6.99,
+    photoUrl:
+      "https://images.unsplash.com/photo-1604908177524-1d9f1c5e4e9e?q=80&w=1974&auto=format&fit=crop",
+    createdAt: Date.now() - 1 * 24 * 60 * 60 * 1000,
+  },
+
+  // ----- Jurassic Grill (restaurantId = "3") -----
+  {
+    id: "d7",
     restaurantId: "3",
     name: "T-Rex Burger",
     description: "Half-pound patty, bacon, cheddar, grilled onions.",
-    priceCents: 1499,
+    priceCents: 14.99,
     photoUrl:
       "https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=1974&auto=format&fit=crop",
     createdAt: Date.now() - 3 * 24 * 60 * 60 * 1000,
   },
   {
-    id: "d5",
+    id: "d8",
     restaurantId: "3",
     name: "Dino Nuggets",
     description: "Crispy, fun-shaped chicken nuggets.",
-    priceCents: 799,
+    priceCents: 7.99,
     photoUrl:
       "https://images.unsplash.com/photo-1626076383919-8e4f3fc2972b?q=80&w=1974&auto=format&fit=crop",
     createdAt: Date.now() - 2 * 24 * 60 * 60 * 1000,
   },
   {
-    id: "d6",
+    id: "d9",
     restaurantId: "3",
     name: "Volcano Wings",
     description: "Spicy buffalo wings with lava sauce.",
-    priceCents: 1199,
+    priceCents: 11.99,
     photoUrl:
       "https://images.unsplash.com/photo-1608032077016-c9c85c45aa5c?q=80&w=1974&auto=format&fit=crop",
     createdAt: Date.now() - 1 * 24 * 60 * 60 * 1000,
