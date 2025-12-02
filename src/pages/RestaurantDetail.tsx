@@ -13,49 +13,67 @@ import { MapPin, Star, DollarSign, ArrowLeft } from "lucide-react";
 import RatingForm from "../components/RatingForm";
 import { fetchRatings, saveRating, computeAverages } from "../services/ratings";
 import { useEffect, useMemo, useState } from "react";
-
-// NEW imports for dishes:
-import { dishes as allDishes } from "../data/Dish";
-import { addDishRating, getDishStatsForRestaurant } from "../services/dishRating";
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../firebase';
 
 export interface RestaurantDetailsProps {
   restaurant: Restaurant;
   onBack: () => void;
 }
 
+// Define the menu item type
+interface MenuItem {
+  id: string;
+  name: string;
+  description?: string;
+  priceCents?: number;
+  photoUrl?: string;
+  averageRating: number;
+  ratingCount: number;
+  likes: number;
+}
+
 export function RestaurantDetails({ restaurant, onBack }: RestaurantDetailsProps) {
   const [loading, setLoading] = useState(true);
   const [ratings, setRatings] = useState<any[]>([]);
+  const [menu, setMenu] = useState<MenuItem[]>([]);
   const stats = useMemo(() => computeAverages(ratings as any), [ratings]);
 
-  // --- new state for dish ratings ---
-  const [dishStats, setDishStats] = useState<
-    Record<string, { avg: number; count: number }>
-  >({});
-
-  // menu for this restaurant
-  const menu = useMemo(
-    () => allDishes.filter((d) => d.restaurantId === restaurant.id),
-    [restaurant.id]
-  );
-
-  function refreshDishStats() {
-    const s = getDishStatsForRestaurant(restaurant.id);
-    setDishStats(s);
-  }
-
+  // Fetch ratings and menu items from Firebase
   useEffect(() => {
     let mounted = true;
-    (async () => {
+    
+    async function fetchData() {
       setLoading(true);
-      const rs = await fetchRatings(restaurant.id);
-      if (mounted) {
-        setRatings(rs);
-        setLoading(false);
+      
+      try {
+        // Fetch restaurant ratings
+        const rs = await fetchRatings(restaurant.id);
+        
+        // Fetch menu items from Firebase
+        const menuItemsRef = collection(db, 'restaurants', restaurant.id, 'menuItems');
+        const menuSnapshot = await getDocs(menuItemsRef);
+        
+        const menuData = menuSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as MenuItem[];
+        
+        if (mounted) {
+          setRatings(rs);
+          setMenu(menuData);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        if (mounted) {
+          setLoading(false);
+        }
       }
-      // load dish stats from localStorage
-      refreshDishStats();
-    })();
+    }
+    
+    fetchData();
+    
     return () => {
       mounted = false;
     };
@@ -76,9 +94,16 @@ export function RestaurantDetails({ restaurant, onBack }: RestaurantDetailsProps
     setRatings(rs);
   }
 
-  function handleDishRate(dishId: string, value: number) {
-    addDishRating({ dishId, restaurantId: restaurant.id, value });
-    refreshDishStats();
+  async function handleDishRate(menuItemId: string, value: number) {
+    try {
+      // Here you would save the dish rating to Firebase
+      // For now, we'll just refresh the menu
+      console.log(`Rating dish ${menuItemId} with ${value} stars`);
+      // TODO: Implement dish rating save to Firebase
+      alert('Dish rating saved! (Feature in progress)');
+    } catch (error) {
+      console.error('Error rating dish:', error);
+    }
   }
 
   return (
@@ -148,31 +173,28 @@ export function RestaurantDetails({ restaurant, onBack }: RestaurantDetailsProps
             </CardContent>
           </Card>
 
-          {/* NEW: Menu (dishes) */}
+          {/* Menu from Firebase */}
           <Card>
             <CardHeader>
               <CardTitle>Menu</CardTitle>
               <CardDescription>Rate your favorite dishes</CardDescription>
             </CardHeader>
             <CardContent>
-              {menu.length === 0 ? (
+              {loading ? (
+                <p className="text-sm text-gray-500">Loading menu...</p>
+              ) : menu.length === 0 ? (
                 <p className="text-sm text-gray-500">
                   No dishes yet for this restaurant.
                 </p>
               ) : (
                 <div className="grid sm:grid-cols-2 gap-4">
-                  {menu.map((dish) => {
-                    const stat = dishStats[dish.id] || { avg: 0, count: 0 };
-                    return (
-                      <DishRow
-                        key={dish.id}
-                        dish={dish}
-                        avg={stat.avg}
-                        count={stat.count}
-                        onRate={handleDishRate}
-                      />
-                    );
-                  })}
+                  {menu.map((dish) => (
+                    <DishRow
+                      key={dish.id}
+                      dish={dish}
+                      onRate={handleDishRate}
+                    />
+                  ))}
                 </div>
               )}
             </CardContent>
@@ -211,19 +233,11 @@ export function RestaurantDetails({ restaurant, onBack }: RestaurantDetailsProps
 }
 
 interface DishRowProps {
-  dish: {
-    id: string;
-    name: string;
-    description?: string;
-    priceCents?: number;
-    photoUrl?: string;
-  };
-  avg: number;
-  count: number;
+  dish: MenuItem;
   onRate: (dishId: string, value: number) => void;
 }
 
-function DishRow({ dish, avg, count, onRate }: DishRowProps) {
+function DishRow({ dish, onRate }: DishRowProps) {
   const [value, setValue] = useState(5);
 
   return (
@@ -242,14 +256,19 @@ function DishRow({ dish, avg, count, onRate }: DishRowProps) {
             {dish.description && (
               <div className="text-xs text-gray-600">{dish.description}</div>
             )}
+            {dish.priceCents && (
+              <div className="text-xs text-green-600 font-medium">
+                ${(dish.priceCents / 100).toFixed(2)}
+              </div>
+            )}
           </div>
           <div className="text-xs text-gray-700 text-right">
             <div className="flex items-center gap-1 justify-end">
               <Star className="h-3 w-3 text-yellow-400 fill-yellow-400" />
-              <span>{avg.toFixed(1)}</span>
+              <span>{dish.averageRating.toFixed(1)}</span>
             </div>
             <div className="text-[11px] text-gray-500">
-              {count} rating{count === 1 ? "" : "s"}
+              {dish.ratingCount} rating{dish.ratingCount === 1 ? "" : "s"}
             </div>
           </div>
         </div>

@@ -6,6 +6,9 @@ import Login from './pages/Login'
 import SignUp from './pages/SignUp'
 import { RestaurantDetails } from './pages/RestaurantDetail'
 import { restaurants } from './data/Restaurants' // array of Restaurant
+import { uploadAllData } from './scripts/uploadData';
+import { AdminPanel } from './pages/AdminPanel';
+
 
 
 function App() {
@@ -33,6 +36,10 @@ function App() {
     return <SignUp onBack={() => navigate('/')} />
   }
 
+  if (path === '/admin') {
+    return <AdminPanel />;
+  }
+
   const match = path.match(/^\/restaurant\/([^/]+)$/)
   if (match) {
     // If your Restaurant.id is a number:
@@ -55,11 +62,13 @@ function App() {
   }
 
   return (
+    <>
     <LandingPage
       onGetStarted={() => navigate('/login')}
       onLogin={() => navigate('/login')}
       onOpenRestaurant={(id: string | number) => navigate(`/restaurant/${id}`)}
     />
+  </>
   )
 }
 
