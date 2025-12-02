@@ -1,11 +1,14 @@
 // App.tsx
-import React, { useEffect, useState } from "react";
-import { LandingPage } from "./pages/LandingPage";
-import { ProfilePage } from "./pages/ProfilePage";
-import Login from "./pages/Login";
-import SignUp from "./pages/SignUp";
-import { RestaurantDetails } from "./pages/RestaurantDetail";
-import { restaurants } from "./data/Restaurants"; // array of Restaurant
+import React, { useEffect, useState } from 'react'
+import { LandingPage } from './pages/LandingPage'
+import Login from './pages/Login'
+import SignUp from './pages/SignUp'
+import { RestaurantDetails } from './pages/RestaurantDetail'
+import { restaurants } from './data/Restaurants' // array of Restaurant
+import { uploadAllData } from './scripts/uploadData';
+import { AdminPanel } from './pages/AdminPanel';
+import { ProfilePage } from './pages/ProfilePage'
+
 
 function App() {
   const [path, setPath] = useState(window.location.pathname);
@@ -75,8 +78,11 @@ function App() {
     );
   }
 
-  // /restaurant/:id
-  const match = path.match(/^\/restaurant\/([^/]+)$/);
+  if (path === '/admin') {
+    return <AdminPanel />;
+  }
+
+  const match = path.match(/^\/restaurant\/([^/]+)$/)
   if (match) {
     const id = decodeURIComponent(match[1]);
     const restaurant = restaurants.find((r) => r.id === id);
@@ -102,6 +108,7 @@ function App() {
 
   // default route: "/"
   return (
+    <>
     <LandingPage
       isLoggedIn={isLoggedIn}
       userName={userName}
@@ -112,7 +119,8 @@ function App() {
         navigate(`/restaurant/${encodeURIComponent(String(id))}`)
       }
     />
-  );
+  </>
+  )
 }
 
 export default App;
