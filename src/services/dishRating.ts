@@ -64,4 +64,8 @@ export interface DishRating {
     }
     return result;
   }
+
+  export function getAllDishRatings(): DishRating[] {
+    return readAll();
+  }
   

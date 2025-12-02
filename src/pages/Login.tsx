@@ -5,7 +5,11 @@ import { auth, db } from '../firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
-export default function Login({ onBack }: { onBack?: () => void }) {
+interface LoginProps {
+  onBack?: () => void;
+  onLoggedIn?: () => void;
+}
+export default function Login({ onBack, onLoggedIn }: LoginProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -35,6 +39,7 @@ export default function Login({ onBack }: { onBack?: () => void }) {
         });
       }
       
+      onLoggedIn?.();
       // Successfully logged in and profile exists/created
       window.history.pushState(null, '', '/');
       window.dispatchEvent(new PopStateEvent('popstate'));

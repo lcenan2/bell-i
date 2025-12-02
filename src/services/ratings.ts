@@ -33,6 +33,13 @@ export async function fetchRatings(restaurantId: string) {
   return snap.docs.map((d) => ({ id: d.id, ...d.data() } as RatingDoc));
 }
 
+export async function fetchRatingsByUser(userId: string) {
+  const q = query(collection(db, "ratings"), where("userId", "==", userId));
+  const snap = await getDocs(q);
+  return snap.docs.map(
+    (d) => ({ id: d.id, ...d.data() } as RatingDoc)
+  );
+}
 export function computeAverages(rs: RatingDoc[]) {
   if (rs.length === 0) {
     return { avg: 0, taste: 0, price: 0, location: 0, environment: 0, count: 0 };

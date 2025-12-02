@@ -5,7 +5,11 @@ import { auth, db } from '../firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 
-export default function SignUp({ onBack }: { onBack?: () => void }) {
+interface SignUpProps {
+  onBack?: () => void;
+  onSignedUp?: () => void;
+}
+export default function SignUp({ onBack, onSignedUp }: SignUpProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -52,6 +56,7 @@ export default function SignUp({ onBack }: { onBack?: () => void }) {
         ratings: []
       });
 
+      onSignedUp?.();
       // Successfully signed up - redirect to home
       window.history.pushState(null, '', '/');
       window.dispatchEvent(new PopStateEvent('popstate'));
