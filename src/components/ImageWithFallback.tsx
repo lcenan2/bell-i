@@ -6,12 +6,22 @@ const ERROR_IMG_SRC =
   export function ImageWithFallback(props: React.ImgHTMLAttributes<HTMLImageElement>) {
     const [didError, setDidError] = useState(false);
   
-    const { src, alt, className = "", ...rest } = props;
-  
-    const fixedClasses = "w-full h-40 object-cover bg-gray-100"; // ALWAYS enforce size
-  
+    const { src, alt, className = '', ...rest } = props;
+    // Don't force a fixed height here — allow parent classes to control sizing.
+    const defaultClasses = 'w-full object-cover bg-gray-100 transition-transform duration-300';
+
+    // If no src is provided or it's an empty/invalid string, immediately render a placeholder instead of attempting to load.
+    const isMissingSrc = !src || (typeof src === 'string' && (!src.trim() || src.trim().toLowerCase() === 'null' || src.trim().toLowerCase() === 'undefined'));
+    if (isMissingSrc) {
+      return (
+        <div className={[defaultClasses, className, 'flex items-center justify-center'].filter(Boolean).join(' ')}>
+          <img src={ERROR_IMG_SRC} alt={alt || 'No image'} className="w-16 h-16 opacity-70" />
+        </div>
+      );
+    }
+
     return didError ? (
-      <div className={fixedClasses + " flex items-center justify-center"}>
+      <div className={[defaultClasses, className, 'flex items-center justify-center'].filter(Boolean).join(' ')}>
         <img
           src={ERROR_IMG_SRC}
           alt="Error loading image"
@@ -22,7 +32,7 @@ const ERROR_IMG_SRC =
       <img
         src={src}
         alt={alt}
-        className={fixedClasses + " " + className}
+        className={[defaultClasses, className].filter(Boolean).join(' ')}
         onError={() => setDidError(true)}
         {...rest}
       />

@@ -51,19 +51,27 @@ export default function RatingForm({
       <div className="divide-y">
         <div className="py-2 flex items-center justify-between gap-4">
           <span className="w-32 text-sm text-gray-700">Taste</span>
-          <Stars rating={vals.taste} interactive onRatingChange={(v) => setField("taste", v)} />
+          <div className="star-wrapper">
+            <Stars rating={vals.taste} interactive onRatingChange={(v) => setField("taste", v)} />
+          </div>
         </div>
         <div className="py-2 flex items-center justify-between gap-4">
           <span className="w-32 text-sm text-gray-700">Price</span>
-          <Stars rating={vals.price} interactive onRatingChange={(v) => setField("price", v)} />
+          <div className="star-wrapper">
+            <Stars rating={vals.price} interactive onRatingChange={(v) => setField("price", v)} />
+          </div>
         </div>
         <div className="py-2 flex items-center justify-between gap-4">
           <span className="w-32 text-sm text-gray-700">Location</span>
-          <Stars rating={vals.location} interactive onRatingChange={(v) => setField("location", v)} />
+          <div className="star-wrapper">
+            <Stars rating={vals.location} interactive onRatingChange={(v) => setField("location", v)} />
+          </div>
         </div>
         <div className="py-2 flex items-center justify-between gap-4">
           <span className="w-32 text-sm text-gray-700">Environment</span>
-          <Stars rating={vals.environment} interactive onRatingChange={(v) => setField("environment", v)} />
+          <div className="star-wrapper">
+            <Stars rating={vals.environment} interactive onRatingChange={(v) => setField("environment", v)} />
+          </div>
         </div>
       </div>
 
