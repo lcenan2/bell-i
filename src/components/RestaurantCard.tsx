@@ -47,7 +47,9 @@ export function RestaurantCard({
         </div>
         
         <div className="flex items-center gap-2 mb-2">
-          <Stars rating={rating} size={16} />
+          <div className="star-wrapper">
+            <Stars rating={rating} size={16} />
+          </div>
           <span className="text-sm text-gray-600">
             {rating.toFixed(1)} ({reviewCount})
           </span>

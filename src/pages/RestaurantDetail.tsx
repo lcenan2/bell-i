@@ -15,6 +15,7 @@ import { fetchRatings, saveRating, computeAverages } from "../services/ratings";
 import { useEffect, useMemo, useState } from "react";
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
+import RecommendedDishes from '../components/RecommendedDishes';
 
 export interface RestaurantDetailsProps {
   restaurant: Restaurant;
@@ -134,11 +135,13 @@ export function RestaurantDetails({ restaurant, onBack }: RestaurantDetailsProps
               <CardDescription>{restaurant.cuisine}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <ImageWithFallback
-                src={restaurant.imageUrl}
-                alt={restaurant.name}
-                className="h-64 w-full rounded-lg object-cover"
-              />
+              <div className="w-full rounded-lg overflow-hidden h-64 md:h-96 max-h-96">
+                <ImageWithFallback
+                  src={restaurant.imageUrl}
+                  alt={restaurant.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
               <div className="flex flex-wrap items-center gap-4 text-sm text-gray-700">
                 <div className="flex items-center gap-1">
                   <MapPin size={16} /> <span>{restaurant.location}</span>
@@ -180,23 +183,28 @@ export function RestaurantDetails({ restaurant, onBack }: RestaurantDetailsProps
               <CardDescription>Rate your favorite dishes</CardDescription>
             </CardHeader>
             <CardContent>
-              {loading ? (
-                <p className="text-sm text-gray-500">Loading menu...</p>
-              ) : menu.length === 0 ? (
-                <p className="text-sm text-gray-500">
-                  No dishes yet for this restaurant.
-                </p>
-              ) : (
-                <div className="grid sm:grid-cols-2 gap-4">
-                  {menu.map((dish) => (
-                    <DishRow
-                      key={dish.id}
-                      dish={dish}
-                      onRate={handleDishRate}
+                {loading ? (
+                  <p className="text-sm text-gray-500">Loading menu...</p>
+                ) : menu.length === 0 ? (
+                  <p className="text-sm text-gray-500">No dishes yet for this restaurant.</p>
+                ) : (
+                  <>
+                    <RecommendedDishes
+                      dishes={menu
+                        .slice()
+                        .sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0))
+                        .slice(0, 6)
+                      }
+                      onRate={(dishId, value) => handleDishRate(dishId, value)}
                     />
-                  ))}
-                </div>
-              )}
+
+                    <div className="mt-4 grid sm:grid-cols-2 gap-4">
+                      {menu.map((dish) => (
+                        <DishRow key={dish.id} dish={dish} onRate={handleDishRate} />
+                      ))}
+                    </div>
+                  </>
+                )}
             </CardContent>
           </Card>
         </section>
@@ -242,13 +250,11 @@ function DishRow({ dish, onRate }: DishRowProps) {
 
   return (
     <div className="border rounded-lg overflow-hidden">
-      {dish.photoUrl && (
-        <img
-          src={dish.photoUrl}
-          alt={dish.name}
-          className="w-full h-32 object-cover"
-        />
-      )}
+      <ImageWithFallback
+        src={dish.photoUrl}
+        alt={dish.name}
+        className="w-full h-32 object-cover"
+      />
       <div className="p-3 space-y-2">
         <div className="flex items-center justify-between">
           <div>
