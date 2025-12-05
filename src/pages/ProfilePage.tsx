@@ -1,4 +1,6 @@
 // src/pages/ProfilePage.tsx
+import { auth, db } from "../firebase";
+import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "../components/Button";
 import {
@@ -28,6 +30,7 @@ export interface ProfilePageProps {
   userId: string;
   userName: string;
   onBack?: () => void;
+  onLogout?: () => Promise<void>;
 
   // Optional metadata so we can show names instead of raw IDs
   restaurants?: RestaurantMeta[];
@@ -38,12 +41,17 @@ export function ProfilePage({
   userId,
   userName,
   onBack,
+  onLogout,
   restaurants = [],
   dishes = [],
 }: ProfilePageProps) {
+  const [profile, setProfile] = useState(null);
   const [restaurantRatings, setRestaurantRatings] = useState<RatingDoc[]>([]);
   const [dishRatings, setDishRatings] = useState<DishRating[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Debug: log if onLogout is received
+  console.log('ProfilePage received onLogout:', typeof onLogout, onLogout ? 'YES' : 'NO');
 
   const restaurantNameById = useMemo(() => {
     const map = new Map<string, RestaurantMeta>();
@@ -62,10 +70,29 @@ export function ProfilePage({
   }, [dishes]);
 
   useEffect(() => {
+    const currentUser = auth.currentUser;
+    if (!currentUser) return;
+
+    // Fetch the current user's profile using their UID
+    const fetchProfile = async () => {
+      const profileRef = doc(db, "user_profiles", currentUser.uid);
+      const profileSnap = await getDoc(profileRef);
+      if (profileSnap.exists()) {
+        setProfile(profileSnap.data());
+      }
+    };
+    fetchProfile();
+  }, []);
+
+  useEffect(() => {
     async function load() {
+      const currentUser = auth.currentUser;
+      if (!currentUser) return;
+
       setLoading(true);
       try {
-        const rs = await fetchRatingsByUser(userId);
+        // Use the current logged-in user's UID, not the userId prop
+        const rs = await fetchRatingsByUser(currentUser.uid);
         setRestaurantRatings(rs);
 
         const dr = getAllDishRatings(); // all for this browser
@@ -75,7 +102,7 @@ export function ProfilePage({
       }
     }
     load();
-  }, [userId]);
+  }, []);
 
   function formatDate(val: any): string {
     if (!val) return "";
@@ -105,11 +132,20 @@ export function ProfilePage({
               <div className="text-lg font-semibold">{userName}</div>
             </div>
           </div>
-          {onBack && (
-            <Button variant="ghost" onClick={onBack}>
-              Back to Discover
-            </Button>
-          )}
+          <div className="flex items-center gap-2">
+            {onBack && (
+              <Button variant="ghost" onClick={onBack}>
+                Back to Discover
+              </Button>
+            )}
+            {onLogout ? (
+              <Button variant="outline" onClick={onLogout}>
+                Logout
+              </Button>
+            ) : (
+              <span className="text-xs text-red-500 font-bold">⚠️ onLogout missing</span>
+            )}
+          </div>
         </div>
       </nav>
 

@@ -10,6 +10,7 @@ export interface LandingPageProps {
   isLoggedIn: boolean;
   onOpenProfile: () => void;
   userName?: string;
+  onLogout?: () => void;
 }
 
 interface Restaurant {
@@ -98,7 +99,8 @@ export function LandingPage({
   onOpenRestaurant,
   isLoggedIn,
   onOpenProfile,
-  userName
+  userName,
+  onLogout
 }: LandingPageProps) {
   const [cuisineFilter, setCuisineFilter] = useState<string>('all');
   const [priceFilter, setPriceFilter] = useState<string>('all'); // 'all' or '1' | '2' | '3' | '4'
@@ -128,10 +130,7 @@ export function LandingPage({
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
-      <nav
-        className="border-b sticky top-0 bg-white/90 backdrop-blur z-50"
-        aria-label="Primary"
-      >
+      <nav className="border-b sticky top-0 bg-white/90 backdrop-blur z-50" aria-label="Primary">
         <div className="landing-container py-4">
           <div className="flex items-center justify-between">
             <a href="#" className="flex items-center gap-2" aria-label="bell-i home">
@@ -142,43 +141,30 @@ export function LandingPage({
             </a>
 
             <div className="flex items-center gap-4">
-              <a
-                href="#features"
-                className="text-gray-700 hover:text-orange-500 transition-colors"
-              >
+              <a href="#features" className="text-gray-700 hover:text-orange-500 transition-colors">
                 Features
               </a>
-              <a
-                href="#testimonials"
-                className="text-gray-700 hover:text-orange-500 transition-colors"
-              >
+              <a href="#testimonials" className="text-gray-700 hover:text-orange-500 transition-colors">
                 Testimonials
               </a>
 
               {isLoggedIn ? (
-                // WHEN LOGGED IN: show profile entry
                 <div className="flex items-center gap-2">
                   {userName && (
                     <span className="text-sm text-gray-700 hidden sm:inline">
                       Hi, {userName}
                     </span>
                   )}
-                  <Button
-                    variant="ghost"
-                    onClick={onOpenProfile}
-                    aria-label="Open profile and rating history"
-                  >
+                  <Button variant="ghost" onClick={onOpenProfile} aria-label="Open profile">
                     Profile
+                  </Button>
+                  <Button variant="outline" onClick={onLogout} aria-label="Logout">
+                    Logout
                   </Button>
                 </div>
               ) : (
-                // WHEN LOGGED OUT: show auth actions
                 <div className="flex items-center gap-2">
-                  <Button
-                    variant="ghost"
-                    onClick={onLogin}
-                    aria-label="Login"
-                  >
+                  <Button variant="ghost" onClick={onLogin} aria-label="Login">
                     Login
                   </Button>
                   <Button onClick={onGetStarted} aria-label="Get Started">

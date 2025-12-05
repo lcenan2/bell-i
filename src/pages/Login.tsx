@@ -41,8 +41,7 @@ export default function Login({ onBack, onLoggedIn }: LoginProps) {
       
       onLoggedIn?.();
       // Successfully logged in and profile exists/created
-      window.history.pushState(null, '', '/');
-      window.dispatchEvent(new PopStateEvent('popstate'));
+
         // Optionally redirect to profile creation:
         // window.history.pushState(null, '', '/create-profile');
         // window.dispatchEvent(new PopStateEvent('popstate'));
