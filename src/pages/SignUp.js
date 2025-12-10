@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 import { auth, db } from '../firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 export default function SignUp({ onBack, onSignedUp }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -33,6 +33,10 @@ export default function SignUp({ onBack, onSignedUp }) {
             // Create user with Firebase Auth
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
+
+            await updateProfile(user, {
+                displayName: username
+            });
             // Create user profile in Firestore
             await setDoc(doc(db, 'user_profiles', user.uid), {
                 username: username,

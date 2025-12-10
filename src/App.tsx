@@ -13,6 +13,7 @@ import { onAuthStateChanged } from 'firebase/auth'
 import { doc, getDoc } from 'firebase/firestore'
 
 function App() {
+  
   const [path, setPath] = useState(window.location.pathname)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [userId, setUserId] = useState<string>('')
@@ -22,6 +23,7 @@ function App() {
   // Listen for auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      
       if (user) {
         setUserId(user.uid)
         setIsLoggedIn(true)
@@ -33,16 +35,20 @@ function App() {
         if (profileSnap.exists()) {
           const username = profileSnap.data().username || user.email || 'User'
           setUserName(username)
+        
         } else {
           setUserName(user.email || 'User')
+         
         }
       } else {
         setIsLoggedIn(false)
         setUserId('')
         setUserName('')
+        
       }
       // Mark auth loading as complete
       setAuthLoading(false)
+      
     })
 
     return () => unsubscribe()
@@ -72,6 +78,14 @@ function App() {
     } catch (err) {
       console.error('Logout failed:', err)
     }
+  }
+
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-xl">Loading...</div>
+      </div>
+    )
   }
 
   if (path === '/login') {

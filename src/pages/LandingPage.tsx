@@ -102,6 +102,7 @@ export function LandingPage({
   userName,
   onLogout
 }: LandingPageProps) {
+  console.log('LandingPage - isLoggedIn:', isLoggedIn, 'onLogout:', typeof onLogout);
   const [cuisineFilter, setCuisineFilter] = useState<string>('all');
   const [priceFilter, setPriceFilter] = useState<string>('all'); // 'all' or '1' | '2' | '3' | '4'
   const [minRating, setMinRating] = useState<string>('0'); // '0', '3.5', '4', '4.5'
@@ -149,18 +150,14 @@ export function LandingPage({
               </a>
 
               {isLoggedIn ? (
-                <div className="flex items-center gap-2">
-                  {userName && (
-                    <span className="text-sm text-gray-700 hidden sm:inline">
-                      Hi, {userName}
-                    </span>
-                  )}
-                  <Button variant="ghost" onClick={onOpenProfile} aria-label="Open profile">
+                <div>
+                  <span>Hi, {userName}</span>
+                  <button onClick={onOpenProfile} style={{ margin: '0 10px', padding: '10px', backgroundColor: 'blue', color: 'white' }}>
                     Profile
-                  </Button>
-                  <Button variant="outline" onClick={onLogout} aria-label="Logout">
+                  </button>
+                  <button onClick={onLogout} style={{ margin: '0 10px', padding: '10px', backgroundColor: 'red', color: 'white' }}>
                     Logout
-                  </Button>
+                  </button>
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
