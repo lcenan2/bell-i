@@ -8,12 +8,46 @@ import { RestaurantDetails } from './pages/RestaurantDetail';
 import { restaurants } from './data/Restaurants'; // array of Restaurant
 import { AdminPanel } from './pages/AdminPanel';
 import { ProfilePage } from './pages/ProfilePage';
+import { auth, db } from './firebase'; 
+import { onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 function App() {
     const [path, setPath] = useState(window.location.pathname);
     // very simple auth stub for now
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const userId = "demo-user-1"; // TODO: replace with real auth user id
-    const userName = "Angela"; // TODO: replace with real auth user name
+    const [userId, setUserId] = useState("");
+    const [userName, setUserName] = useState("");
+    const [authLoading, setAuthLoading] = useState(true);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        
+            if (user) {
+                setIsLoggedIn(true);
+                setUserId(user.uid);
+                const userProfileRef = doc(db, 'user_profiles', user.uid);
+                const profileSnap = await getDoc(userProfileRef);
+
+                if (profileSnap.exists()) {
+                    const username = profileSnap.data().username || user.email || 'User';
+                    setUserName(username);
+                    
+                } else {
+                    setUserName(user.email || 'User');
+                    
+                }
+            } else {
+                setIsLoggedIn(false);
+                setUserId("");
+                setUserName("");
+            }
+            setAuthLoading(false);
+           
+        });
+        
+        return () => unsubscribe();
+    }, []);
+
     useEffect(() => {
         const onPop = () => setPath(window.location.pathname);
         window.addEventListener("popstate", onPop);
@@ -26,6 +60,22 @@ function App() {
             window.scrollTo(0, 0);
         }
     };
+    const handleLogout = async () => {
+        try {
+            await auth.signOut();
+            setIsLoggedIn(false);
+            setUserId("");
+            setUserName("");
+            navigate("/");
+        } catch (error) {
+        console.error("Error logging out:", error);
+        }
+    };
+    
+    if (authLoading) {
+        return (_jsx("div", { className: "flex items-center justify-center h-screen", children: _jsx("div", { className: "text-xl", children: "Loading..." }) }));
+    }
+  
     if (path === "/login") {
         return (_jsx(Login, { onBack: () => navigate("/"), onLoggedIn: () => {
                 setIsLoggedIn(true);
@@ -44,11 +94,17 @@ function App() {
             navigate("/login");
             return null;
         }
-        return (_jsx(ProfilePage, { userId: userId, userName: userName, restaurants: restaurants.map((r) => ({
+        return (_jsx(ProfilePage, { 
+            userId: userId, 
+            userName: userName, 
+            restaurants: restaurants.map((r) => ({
                 id: r.id,
                 name: r.name,
                 location: r.location,
-            })), onBack: () => navigate("/") }));
+            })), 
+            onBack: () => navigate("/"),
+            onLogout: handleLogout
+        }));
     }
     if (path === '/admin') {
         return _jsx(AdminPanel, {});
@@ -62,7 +118,16 @@ function App() {
         }
         return (_jsx(RestaurantDetails, { restaurant: restaurant, onBack: () => navigate("/") }));
     }
+    
     // default route: "/"
-    return (_jsx(_Fragment, { children: _jsx(LandingPage, { isLoggedIn: isLoggedIn, userName: userName, onGetStarted: () => navigate("/signup"), onLogin: () => navigate("/login"), onOpenProfile: () => navigate("/profile"), onOpenRestaurant: (id) => navigate(`/restaurant/${encodeURIComponent(String(id))}`) }) }));
+    return (_jsx(_Fragment, { children: _jsx(LandingPage, { 
+    isLoggedIn: isLoggedIn, 
+    userName: userName, 
+    onGetStarted: () => navigate("/signup"), 
+    onLogin: () => navigate("/login"), 
+    onOpenProfile: () => navigate("/profile"), 
+    onOpenRestaurant: (id) => navigate(`/restaurant/${encodeURIComponent(String(id))}`),
+    onLogout: handleLogout  
+}) }));
 }
 export default App;
