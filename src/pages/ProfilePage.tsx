@@ -45,7 +45,7 @@ export function ProfilePage({
   restaurants = [],
   dishes = [],
 }: ProfilePageProps) {
-  const [profile, setProfile] = useState(null);
+  const [profile, setProfile] = useState<any>(null);
   const [restaurantRatings, setRestaurantRatings] = useState<RatingDoc[]>([]);
   const [dishRatings, setDishRatings] = useState<DishRating[]>([]);
   const [loading, setLoading] = useState(true);

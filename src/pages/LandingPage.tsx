@@ -65,18 +65,18 @@ const restaurants: Restaurant[] = [
     reviewCount: 89,
     priceLevel: 3,
     imageUrl:
-      '...',
+      '/restaurant-images/sakanaya.jpeg',
     location: 'Champaign',
   },
   {
-    id: '4',
+    id: '5',
     name: "McDonald's",
     cuisine: 'American',
     rating: 0,
     reviewCount: 89,
     priceLevel: 1,
     imageUrl:
-      '...',
+      '/restaurant-images/mcdonalds.jpeg',
     location: 'Champaign',
   },
 ];
@@ -169,12 +169,15 @@ export function LandingPage({
       if (priceFilter !== 'all' && r.priceLevel !== Number(priceFilter)) {
         return false;
       }
-      if (Number(minRating) > 0 && r.rating < Number(minRating)) {
+      // Use dynamically computed averages from ratingStats when available
+      const stats = ratingStats[r.id];
+      const avg = stats && typeof stats.avg === 'number' && stats.count > 0 ? stats.avg : r.rating;
+      if (Number(minRating) > 0 && avg < Number(minRating)) {
         return false;
       }
       return true;
     });
-  }, [cuisineFilter, priceFilter, minRating]);
+  }, [cuisineFilter, priceFilter, minRating, ratingStats]);
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}

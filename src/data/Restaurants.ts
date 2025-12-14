@@ -43,5 +43,27 @@ export const restaurants: Restaurant[] = [
     imageUrl: "/restaurant-images/chopstix.jpeg",
     location: "202 E Green St, Champaign, IL 61820",
     likes: 0,
-  }
+  }, 
+  {
+        id: "4",
+        name: "Sakanaya",
+        cuisine: "Japanese",
+        rating: 3,
+        reviewCount: 100,
+        priceLevel: 3,
+        imageUrl: "/restaurant-images/sakanaya.jpeg",
+        location: "403 E Green St, Champaign, IL 61820",
+        likes: 0,
+    }, 
+    {
+        id: "5",
+        name: "Mcdonalds",
+        cuisine: "American",
+        rating: 1,
+        reviewCount: 100,
+        priceLevel: 1,
+        imageUrl: "/restaurant-images/mcdonalds.jpeg",
+        location: "616 E Green St, Champaign, IL 61820",
+        likes: 0,
+    }, 
 ];
