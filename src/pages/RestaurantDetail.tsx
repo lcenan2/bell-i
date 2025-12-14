@@ -12,7 +12,7 @@ import { ImageWithFallback } from '../components/ImageWithFallback'
 import { MapPin, Star, DollarSign, ArrowLeft } from 'lucide-react'
 import RatingForm from '../components/RatingForm'
 import { fetchRatings, saveRating, computeAverages } from '../services/ratings'
-import { saveDishRating, subscribeToDishRatings, getDishStatsForRestaurant } from '../services/dishRating'
+import { saveDishRating, subscribeToDishRatings, getDishStatsForRestaurant, fetchDishRatingsForRestaurant } from '../services/dishRating'
 import { collection, getDocs } from 'firebase/firestore'
 import { db } from '../firebase'
 import { dishes as localDishes } from '../data/Dish'
@@ -39,14 +39,57 @@ export function RestaurantDetails({ restaurant, onBack }: { restaurant: Restaura
   const [menu, setMenu] = useState<MenuItem[]>([])
   const [dishRatings, setDishRatings] = useState<any[]>([])
   const stats = useMemo(() => computeAverages(ratings), [ratings])
-  const dishStats = useMemo(() => getDishStatsForRestaurant(dishRatings), [dishRatings])
-
-  // Subscribe to real-time dish rating updates
-  useEffect(() => {
-    const unsubscribe = subscribeToDishRatings(restaurant.id, (ratings) => {
-      setDishRatings(ratings)
+  const dishStats = useMemo(() => {
+    const stats = getDishStatsForRestaurant(dishRatings)
+    console.log('Updated dishStats:', stats)
+    console.log('From dishRatings:', dishRatings)
+    return stats
+  }, [dishRatings])
+  const sortedMenu = useMemo(() => {
+    const sorted = [...menu].sort((a, b) => {
+      const ratingA = dishStats[a.id]?.avg ?? 0
+      const ratingB = dishStats[b.id]?.avg ?? 0
+      console.log(`Comparing ${a.name} (${ratingA}) vs ${b.name} (${ratingB})`)
+      // Sort by rating descending (highest first)
+      if (ratingA !== ratingB) {
+        return ratingB - ratingA
+      }
+      // Break ties alphabetically by name
+      return a.name.localeCompare(b.name)
     })
-    return () => unsubscribe()
+    console.log('Final sorted menu:', sorted.map(d => ({ name: d.name, id: d.id, rating: dishStats[d.id]?.avg ?? 0 })))
+    return sorted
+  }, [menu, dishStats])
+
+  // Subscribe to real-time dish rating updates and fetch initial ratings
+  useEffect(() => {
+    let mounted = true
+    
+    // First, fetch the existing ratings
+    async function loadInitialRatings() {
+      try {
+        const initialRatings = await fetchDishRatingsForRestaurant(restaurant.id)
+        if (mounted) {
+          setDishRatings(initialRatings)
+        }
+      } catch (error) {
+        console.error('Error fetching initial dish ratings:', error)
+      }
+    }
+    
+    loadInitialRatings()
+    
+    // Then subscribe to updates
+    const unsubscribe = subscribeToDishRatings(restaurant.id, (ratings) => {
+      if (mounted) {
+        setDishRatings(ratings)
+      }
+    })
+    
+    return () => {
+      mounted = false
+      unsubscribe()
+    }
   }, [restaurant.id])
 
   // Fetch ratings and menu items from Firebase
@@ -204,7 +247,7 @@ export function RestaurantDetails({ restaurant, onBack }: { restaurant: Restaura
                 <p className="text-sm text-gray-500">No dishes yet for this restaurant.</p>
               ) : (
                 <div className="grid sm:grid-cols-2 gap-4">
-                  {menu.map((dish) => (
+                  {sortedMenu.map((dish) => (
                     <DishRow
                       key={dish.id}
                       dish={dish}
