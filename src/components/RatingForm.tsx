@@ -1,5 +1,5 @@
 // src/components/RatingForm.tsx
-import { useMemo, useState, FormEvent } from "react";
+import { useMemo, useState, FormEvent, useEffect } from "react";
 import { Stars } from "./Stars";
 import { Input } from "./Input";
 import { Button } from "./Button";
@@ -15,17 +15,30 @@ export type RatingValues = {
 export default function RatingForm({
   onSubmit,
   busy = false,
+  initialValues,
+  isEditing = false,
 }: {
   onSubmit: (values: RatingValues) => Promise<void> | void;
   busy?: boolean;
+  initialValues?: RatingValues;
+  isEditing?: boolean;
 }) {
-  const [vals, setVals] = useState<RatingValues>({
-    taste: 0,
-    price: 0,
-    location: 0,
-    environment: 0,
-    comment: "",
-  });
+  const [vals, setVals] = useState<RatingValues>(
+    initialValues || {
+      taste: 0,
+      price: 0,
+      location: 0,
+      environment: 0,
+      comment: "",
+    }
+  );
+
+  // Update form when initialValues change
+  useEffect(() => {
+    if (initialValues) {
+      setVals(initialValues);
+    }
+  }, [initialValues]);
 
   const overall = useMemo(() => {
     const { taste, price, location, environment } = vals;
@@ -87,7 +100,9 @@ export default function RatingForm({
 
       <div className="flex items-center justify-between">
         <p className="text-sm text-gray-500">Overall: {overall}/5</p>
-        <Button disabled={disabled}>{busy ? "Submitting…" : "Submit rating"}</Button>
+        <Button disabled={disabled}>
+          {busy ? (initialValues ? "Updating…" : "Submitting…") : (initialValues ? "Update rating" : "Submit rating")}
+        </Button>
       </div>
     </form>
   );

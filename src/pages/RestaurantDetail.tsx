@@ -11,8 +11,8 @@ import { Button } from '../components/Button'
 import { ImageWithFallback } from '../components/ImageWithFallback'
 import { MapPin, Star, DollarSign, ArrowLeft } from 'lucide-react'
 import RatingForm from '../components/RatingForm'
-import { fetchRatings, saveRating, computeAverages, fetchReviewsWithComments } from '../services/ratings'
-import { saveDishRating, subscribeToDishRatings, getDishStatsForRestaurant, fetchDishRatingsForRestaurant } from '../services/dishRating'
+import { fetchRatings, saveRating, computeAverages, fetchReviewsWithComments, fetchUserRatingForRestaurant, updateRating } from '../services/ratings'
+import { saveDishRating, subscribeToDishRatings, getDishStatsForRestaurant, fetchDishRatingsForRestaurant, fetchUserDishRating, updateDishRating } from '../services/dishRating'
 import { collection, getDocs } from 'firebase/firestore'
 import { db } from '../firebase'
 import { dishes as localDishes } from '../data/Dish'
@@ -40,6 +40,7 @@ export function RestaurantDetails({ restaurant, onBack, userId, username }: { re
   const [reviews, setReviews] = useState<any[]>([])
   const [menu, setMenu] = useState<MenuItem[]>([])
   const [dishRatings, setDishRatings] = useState<any[]>([])
+  const [existingRating, setExistingRating] = useState<any>(null)
   const stats = useMemo(() => computeAverages(ratings), [ratings])
   const dishStats = useMemo(() => {
     const stats = getDishStatsForRestaurant(dishRatings)
@@ -130,10 +131,17 @@ export function RestaurantDetails({ restaurant, onBack, userId, username }: { re
           }))
           : menuData
 
+        // Check if user has already rated this restaurant
+        let userRating = null
+        if (userId) {
+          userRating = await fetchUserRatingForRestaurant(userId, restaurant.id)
+        }
+
         if (mounted) {
           setRatings(rs)
           setReviews(reviewData)
           setMenu(finalMenu)
+          setExistingRating(userRating)
           setLoading(false)
         }
       } catch (error) {
@@ -147,30 +155,55 @@ export function RestaurantDetails({ restaurant, onBack, userId, username }: { re
     return () => {
       mounted = false
     }
-  }, [restaurant.id])
+  }, [restaurant.id, userId])
 
   async function handleSubmit(values: any) {
-    await saveRating({
-      restaurantId: restaurant.id,
-      userId: userId,
-      username: username,
-      ...values,
-    })
+    if (existingRating) {
+      // Update existing rating
+      await updateRating(existingRating.id, values)
+    } else {
+      // Create new rating
+      await saveRating({
+        restaurantId: restaurant.id,
+        userId: userId,
+        username: username,
+        ...values,
+      })
+    }
     const rs = await fetchRatings(restaurant.id)
     setRatings(rs)
     // Refresh reviews to show the new comment if added
     const reviewData = await fetchReviewsWithComments(restaurant.id)
     setReviews(reviewData)
+    // Update existing rating state
+    if (userId) {
+      const userRating = await fetchUserRatingForRestaurant(userId, restaurant.id)
+      setExistingRating(userRating)
+    }
   }
 
   async function handleDishRate(menuItemId: string, value: number) {
     try {
-      await saveDishRating({
-        dishId: menuItemId,
-        restaurantId: restaurant.id,
-        value: value,
-      })
-      console.log(`Rating dish ${menuItemId} with ${value} stars saved to Firebase`)
+      // Check if user already has a rating for this dish
+      let existingDishRating = null
+      if (userId) {
+        existingDishRating = await fetchUserDishRating(userId, menuItemId)
+      }
+
+      if (existingDishRating) {
+        // Update existing rating
+        await updateDishRating(existingDishRating.id, value)
+        console.log(`Updated dish rating ${menuItemId} with ${value} stars`)
+      } else {
+        // Create new rating
+        await saveDishRating({
+          dishId: menuItemId,
+          restaurantId: restaurant.id,
+          value: value,
+          userId: userId,
+        })
+        console.log(`Created new dish rating ${menuItemId} with ${value} stars`)
+      }
     } catch (error) {
       console.error('Error rating dish:', error)
       alert('Failed to save dish rating. Please try again.')
@@ -269,6 +302,7 @@ export function RestaurantDetails({ restaurant, onBack, userId, username }: { re
                       dish={dish}
                       dishStats={dishStats[dish.id] || { avg: 0, count: 0 }}
                       onRate={handleDishRate}
+                      userId={userId}
                     />
                   ))}
                 </div>
@@ -281,12 +315,24 @@ export function RestaurantDetails({ restaurant, onBack, userId, username }: { re
           <Card>
             <CardHeader className="!grid-rows-[auto]">
               <div>
-                <CardTitle>Rate {restaurant.name}</CardTitle>
-                <p className="text-sm text-gray-500 mt-6">Share your experience</p>
+                <CardTitle>{existingRating ? 'Edit Your Rating' : `Rate ${restaurant.name}`}</CardTitle>
+                <p className="text-sm text-gray-500 mt-6">
+                  {existingRating ? 'Update your experience' : 'Share your experience'}
+                </p>
               </div>
             </CardHeader>
             <CardContent>
-              <RatingForm onSubmit={handleSubmit} busy={loading} />
+              <RatingForm 
+                onSubmit={handleSubmit} 
+                busy={loading}
+                initialValues={existingRating ? {
+                  taste: existingRating.taste,
+                  price: existingRating.price,
+                  location: existingRating.location,
+                  environment: existingRating.environment,
+                  comment: existingRating.comment || '',
+                } : undefined}
+              />
             </CardContent>
           </Card>
 
@@ -313,9 +359,30 @@ export function RestaurantDetails({ restaurant, onBack, userId, username }: { re
   )
 }
 
-function DishRow({ dish, dishStats, onRate }: { dish: MenuItem; dishStats: DishStats; onRate: (dishId: string, value: number) => void }) {
+function DishRow({ dish, dishStats, onRate, userId }: { dish: MenuItem; dishStats: DishStats; onRate: (dishId: string, value: number) => void; userId?: string }) {
   const [value, setValue] = useState(5)
   const [submitted, setSubmitted] = useState(false)
+  const [existingRating, setExistingRating] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+
+  // Load user's existing rating for this dish
+  useEffect(() => {
+    async function loadExistingRating() {
+      if (userId) {
+        try {
+          const rating = await fetchUserDishRating(userId, dish.id)
+          if (rating) {
+            setExistingRating(rating)
+            setValue(rating.value)
+          }
+        } catch (error) {
+          console.error('Error fetching user dish rating:', error)
+        }
+      }
+      setLoading(false)
+    }
+    loadExistingRating()
+  }, [userId, dish.id])
 
   // Normalize price from either dollars (floats/ints) or cents (integers >= 100).
   const getDisplayPrice = (p?: number): string | null => {
@@ -374,17 +441,26 @@ function DishRow({ dish, dishStats, onRate }: { dish: MenuItem; dishStats: DishS
           </select>
           <button
             className="ml-auto px-3 py-1 text-xs rounded bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary"
-            disabled={submitted}
+            disabled={submitted || loading}
             onClick={async () => {
               try {
                 await onRate(dish.id, value)
                 setSubmitted(true)
+                // Reload existing rating after update
+                if (userId) {
+                  const rating = await fetchUserDishRating(userId, dish.id)
+                  if (rating) {
+                    setExistingRating(rating)
+                  }
+                }
+                // Reset submitted state after a short delay
+                setTimeout(() => setSubmitted(false), 2000)
               } catch (error) {
                 console.error('Error submitting rating:', error)
               }
             }}
           >
-            {submitted ? 'Submitted' : 'Submit'}
+            {submitted ? (existingRating ? 'Updated!' : 'Submitted!') : (existingRating ? 'Update' : 'Submit')}
           </button>
         </div>
       </div>

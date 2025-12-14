@@ -9,6 +9,8 @@ import {
   getDocs,
   onSnapshot,
   Unsubscribe,
+  doc,
+  updateDoc,
 } from "firebase/firestore";
 
 export interface DishRating {
@@ -63,6 +65,17 @@ export async function saveDishRating(params: {
     // non-fatal
     console.warn("Failed to save local dish rating", e);
   }
+}
+
+/**
+ * Update an existing dish rating
+ */
+export async function updateDishRating(ratingId: string, value: number): Promise<void> {
+  const normalizedValue = Math.max(1, Math.min(5, Math.round(value)));
+  const ratingRef = doc(db, "dishRatings", ratingId);
+  await updateDoc(ratingRef, {
+    value: normalizedValue,
+  });
 }
 
 /**
@@ -134,5 +147,20 @@ export function getAllDishRatings(): DishRating[] {
   } catch {
     return [];
   }
+}
+
+/**
+ * Fetch a user's rating for a specific dish
+ */
+export async function fetchUserDishRating(userId: string, dishId: string): Promise<(DishRating & { id: string }) | null> {
+  const q = query(
+    collection(db, "dishRatings"),
+    where("userId", "==", userId),
+    where("dishId", "==", dishId)
+  );
+  const snap = await getDocs(q);
+  if (snap.empty) return null;
+  const docSnap = snap.docs[0];
+  return { id: docSnap.id, ...docSnap.data() } as DishRating & { id: string };
 }
   

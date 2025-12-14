@@ -7,6 +7,8 @@ import {
   query,
   where,
   getDocs,
+  doc,
+  updateDoc,
 } from "firebase/firestore";
 
 export type RatingDoc = {
@@ -26,6 +28,11 @@ export async function saveRating(r: Omit<RatingDoc, "createdAt">) {
     ...r,
     createdAt: serverTimestamp(),
   });
+}
+
+export async function updateRating(ratingId: string, updates: Partial<Omit<RatingDoc, "createdAt" | "userId" | "restaurantId">>) {
+  const ratingRef = doc(db, "ratings", ratingId);
+  await updateDoc(ratingRef, updates);
 }
 
 export async function fetchRatings(restaurantId: string) {
@@ -48,6 +55,18 @@ export async function fetchRatingsByUser(userId: string) {
   return snap.docs.map(
     (d) => ({ id: d.id, ...d.data() } as RatingDoc)
   );
+}
+
+export async function fetchUserRatingForRestaurant(userId: string, restaurantId: string) {
+  const q = query(
+    collection(db, "ratings"),
+    where("userId", "==", userId),
+    where("restaurantId", "==", restaurantId)
+  );
+  const snap = await getDocs(q);
+  if (snap.empty) return null;
+  const doc = snap.docs[0];
+  return { id: doc.id, ...doc.data() } as RatingDoc & { id: string };
 }
 export function computeAverages(rs: RatingDoc[]) {
   if (rs.length === 0) {
