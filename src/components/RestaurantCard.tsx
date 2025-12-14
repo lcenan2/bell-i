@@ -34,25 +34,23 @@ export function RestaurantCard({
   const displayImage = DEFAULT_RESTAURANT_IMAGE;
   return (
     <Card 
-      className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
+      className="overflow-hidden cursor-pointer"
       onClick={onClick}
     >
-      <h3 className="truncate text-base font-semibold">{name}</h3>
-
       <div className="aspect-video w-full overflow-hidden">
         <ImageWithFallback 
           src={displayImage} 
           alt={name}
-          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+          className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
         />
       </div>
-      <div className="p-4">
-        <div className="flex items-start justify-between mb-2">
-          <h3 className="flex-1">{name}</h3>
+      <div className="p-6 space-y-3">
+        <div className="flex items-start justify-between gap-3">
+          <h3 className="flex-1 text-lg font-semibold truncate">{name}</h3>
           <Badge variant="secondary">{cuisine}</Badge>
         </div>
         
-        <div className="flex items-center gap-2 mb-2">
+        <div className="flex items-center gap-2">
           <div className="star-wrapper">
             <Stars rating={rating} size={16} />
           </div>
@@ -62,13 +60,13 @@ export function RestaurantCard({
         </div>
         
         <div className="flex items-center justify-between text-sm text-gray-600">
-          <div className="flex items-center gap-1">
-            <MapPin size={14} />
+          <div className="flex items-center gap-2">
+            <MapPin size={16} />
             <span>{location}</span>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center gap-0.5">
             {Array.from({ length: priceLevel }, (_, i) => (
-              <DollarSign key={i} size={14} className="text-green-600" />
+              <DollarSign key={i} size={16} className="text-green-600" />
             ))}
           </div>
         </div>

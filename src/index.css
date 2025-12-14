@@ -13,6 +13,39 @@ body,
   padding: 0;
 }
 
+/* === Page animations === */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 500ms ease-in-out forwards;
+}
+
+.slide-in-up {
+  animation: slideInUp 600ms ease-out forwards;
+}
+
+.page-transition {
+  animation: fadeIn 400ms ease-in-out;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #111827;
@@ -20,12 +53,120 @@ body,
   --gray-600: #4b5563;
   --gray-700: #374151;
   --border: #e5e7eb;
+  
+  /* === Spacing System === */
+  /* Consistent spacing scale: 4px base unit */
+  --spacing-0: 0;
+  --spacing-1: 0.25rem; /* 4px */
+  --spacing-2: 0.5rem;  /* 8px */
+  --spacing-3: 0.75rem; /* 12px */
+  --spacing-4: 1rem;    /* 16px */
+  --spacing-5: 1.25rem; /* 20px */
+  --spacing-6: 1.5rem;  /* 24px */
+  --spacing-8: 2rem;    /* 32px */
+  --spacing-10: 2.5rem; /* 40px */
+  --spacing-12: 3rem;   /* 48px */
+  --spacing-16: 4rem;   /* 64px */
+  --spacing-20: 5rem;   /* 80px */
+  --spacing-24: 6rem;   /* 96px */
+  
+  /* Section spacing */
+  --section-padding-y: var(--spacing-16);
+  --section-padding-x: var(--spacing-6);
+  --card-padding: var(--spacing-6);
+  --container-padding: var(--spacing-4);
+  
+  /* === Typography Scale === */
+  /* Font sizes following a modular scale */
+  --text-xs: 0.75rem;    /* 12px */
+  --text-sm: 0.875rem;   /* 14px */
+  --text-base: 1rem;     /* 16px */
+  --text-lg: 1.125rem;   /* 18px */
+  --text-xl: 1.25rem;    /* 20px */
+  --text-2xl: 1.5rem;    /* 24px */
+  --text-3xl: 1.875rem;  /* 30px */
+  --text-4xl: 2.25rem;   /* 36px */
+  --text-5xl: 3rem;      /* 48px */
+  --text-6xl: 3.75rem;   /* 60px */
+  
+  /* Line heights */
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose: 2;
+  
+  /* === Animation durations === */
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-slow: 300ms;
+  --duration-slower: 500ms;
+  
+  /* === Transition easings === */
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   background-color: var(--background);
   color: var(--foreground);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+}
+
+/* === Typography Hierarchy === */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  margin: 0;
+  color: var(--foreground);
+}
+
+h1 {
+  font-size: var(--text-5xl);
+  letter-spacing: -0.025em;
+  margin-bottom: var(--spacing-6);
+}
+
+h2 {
+  font-size: var(--text-4xl);
+  letter-spacing: -0.025em;
+  margin-bottom: var(--spacing-5);
+}
+
+h3 {
+  font-size: var(--text-3xl);
+  margin-bottom: var(--spacing-4);
+}
+
+h4 {
+  font-size: var(--text-2xl);
+  margin-bottom: var(--spacing-4);
+}
+
+h5 {
+  font-size: var(--text-xl);
+  margin-bottom: var(--spacing-3);
+}
+
+h6 {
+  font-size: var(--text-lg);
+  margin-bottom: var(--spacing-3);
+  font-weight: 500;
+}
+
+p {
+  margin: 0 0 var(--spacing-4) 0;
+  line-height: var(--leading-relaxed);
+}
+
+/* Responsive typography */
+@media (max-width: 640px) {
+  h1 { font-size: var(--text-4xl); }
+  h2 { font-size: var(--text-3xl); }
+  h3 { font-size: var(--text-2xl); }
 }
 
 /* Links */
@@ -80,35 +221,35 @@ a:hover {
   backdrop-filter: blur(12px);
 }
 
-/* Spacing utilities */
+/* Spacing utilities - using consistent spacing scale */
 .py-4 {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
+  padding-top: var(--spacing-4);
+  padding-bottom: var(--spacing-4);
 }
 .py-10 {
-  padding-top: 2.5rem;
-  padding-bottom: 2.5rem;
+  padding-top: var(--spacing-10);
+  padding-bottom: var(--spacing-10);
 }
 .py-14 {
   padding-top: 3.5rem;
   padding-bottom: 3.5rem;
 }
 .py-16 {
-  padding-top: 4rem;
-  padding-bottom: 4rem;
+  padding-top: var(--spacing-16);
+  padding-bottom: var(--spacing-16);
 }
 .py-20 {
-  padding-top: 5rem;
-  padding-bottom: 5rem;
+  padding-top: var(--spacing-20);
+  padding-bottom: var(--spacing-20);
 }
 .mt-12 {
-  margin-top: 3rem;
+  margin-top: var(--spacing-12);
 }
 .mb-6 {
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--spacing-6);
 }
 .mb-8 {
-  margin-bottom: 2rem;
+  margin-bottom: var(--spacing-8);
 }
 
 /* Typography */
@@ -139,15 +280,170 @@ a:hover {
   color: #ffffff;
 }
 
-/* Hover / transitions */
+/* Hover / transitions - using consistent durations */
 .hover\:text-orange-500:hover {
   color: #f97316;
 }
 .transition-colors {
-  transition: color 150ms ease, background-color 150ms ease;
+  transition: color var(--duration-fast) var(--ease-in-out), 
+              background-color var(--duration-fast) var(--ease-in-out);
 }
 .transition-shadow {
-  transition: box-shadow 150ms ease;
+  transition: box-shadow var(--duration-base) var(--ease-out);
+}
+.transition-all {
+  transition: all var(--duration-base) var(--ease-in-out);
+}
+.duration-200 {
+  transition-duration: var(--duration-base);
+}
+.duration-300 {
+  transition-duration: var(--duration-slow);
+}
+
+/* === Micro-interactions === */
+/* Button press feedback */
+.btn-press {
+  transition: transform var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out);
+}
+.btn-press:active {
+  transform: scale(0.97);
+}
+
+/* Smooth hover lift */
+.hover-lift {
+  transition: transform var(--duration-base) var(--ease-out),
+              box-shadow var(--duration-base) var(--ease-out);
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+/* Input focus animations */
+.input-focus {
+  transition: border-color var(--duration-base) var(--ease-in-out),
+              box-shadow var(--duration-base) var(--ease-in-out),
+              transform var(--duration-fast) var(--ease-out);
+}
+.input-focus:focus {
+  transform: scale(1.01);
+}
+
+/* Checkbox animations */
+input[type="checkbox"] {
+  appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid var(--border);
+  border-radius: 0.25rem;
+  cursor: pointer;
+  position: relative;
+  transition: all var(--duration-base) var(--ease-bounce);
+}
+
+input[type="checkbox"]:hover {
+  border-color: var(--primary);
+  transform: scale(1.1);
+}
+
+input[type="checkbox"]:checked {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  animation: checkboxPop var(--duration-slow) var(--ease-bounce);
+}
+
+input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  animation: checkmarkSlide var(--duration-slow) var(--ease-out);
+}
+
+@keyframes checkboxPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+@keyframes checkmarkSlide {
+  0% { 
+    opacity: 0;
+    transform: rotate(45deg) translateY(5px);
+  }
+  100% { 
+    opacity: 1;
+    transform: rotate(45deg) translateY(0);
+  }
+}
+
+/* Card hover effects */
+.card-interactive {
+  transition: transform var(--duration-base) var(--ease-out),
+              box-shadow var(--duration-base) var(--ease-out),
+              border-color var(--duration-base) var(--ease-in-out);
+}
+.card-interactive:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -4px rgba(0, 0, 0, 0.15);
+}
+
+/* Badge pulse on hover */
+.badge-pulse:hover {
+  animation: badgePulse 600ms var(--ease-in-out);
+}
+
+@keyframes badgePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Link underline animation */
+.link-underline {
+  position: relative;
+  text-decoration: none;
+}
+.link-underline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 2px;
+  background-color: currentColor;
+  transition: width var(--duration-slow) var(--ease-out);
+}
+.link-underline:hover::after {
+  width: 100%;
+}
+
+/* Ripple effect for buttons */
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+.ripple::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width var(--duration-slower) var(--ease-out),
+              height var(--duration-slower) var(--ease-out);
+}
+.ripple:active::after {
+  width: 300px;
+  height: 300px;
 }
 
 /* Cursor */
@@ -161,6 +457,15 @@ a:hover {
 }
 .shadow-xl {
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+}
+.shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+.shadow-md {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+.shadow-sm {
+  box-shadow: 0 1px 2px -1px rgba(0, 0, 0, 0.1);
 }
 .hover\:shadow-lg:hover {
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
@@ -197,7 +502,7 @@ a:hover {
   max-width: 24rem;
 }
 
-/* Flexbox utilities */
+/* Flexbox utilities - using consistent spacing for gaps */
 .flex {
   display: flex;
 }
@@ -217,19 +522,22 @@ a:hover {
   flex-wrap: wrap;
 }
 .gap-1 {
-  gap: 0.25rem;
+  gap: var(--spacing-1);
 }
 .gap-2 {
-  gap: 0.5rem;
+  gap: var(--spacing-2);
 }
 .gap-3 {
-  gap: 0.75rem;
+  gap: var(--spacing-3);
 }
 .gap-4 {
-  gap: 1rem;
+  gap: var(--spacing-4);
 }
 .gap-6 {
-  gap: 1.5rem;
+  gap: var(--spacing-6);
+}
+.gap-8 {
+  gap: var(--spacing-8);
 }
 
 /* Grid utilities */
@@ -309,24 +617,30 @@ a:hover {
   padding-right: 1.5rem;
 }
 
-/* Generic section spacing */
+/* Generic section spacing - using consistent spacing scale */
 .section {
-  padding-top: 4rem;
-  padding-bottom: 4rem;
+  padding-top: var(--section-padding-y);
+  padding-bottom: var(--section-padding-y);
+  padding-left: var(--section-padding-x);
+  padding-right: var(--section-padding-x);
 }
 
 /* Muted background sections */
 .section-muted {
-  padding-top: 4rem;
-  padding-bottom: 4rem;
+  padding-top: var(--section-padding-y);
+  padding-bottom: var(--section-padding-y);
+  padding-left: var(--section-padding-x);
+  padding-right: var(--section-padding-x);
   background-color: #fff7ed;
 }
 
-/* Center section titles by default */
+/* Center section titles by default - using typography scale */
 .section-title {
-  font-size: 1.5rem;
+  font-size: var(--text-3xl);
   font-weight: 600;
   text-align: center;
+  margin-bottom: var(--spacing-8);
+  line-height: var(--leading-tight);
 }
 
 /* Hero area */
@@ -367,22 +681,30 @@ a:hover {
 
 /* ===== Missing utilities used in RestaurantDetail / RestaurantCard ===== */
 
-/* container + padding */
-.container { max-width: 1100px; margin-left: auto; margin-right: auto; }
-.px-4 { padding-left: 1rem; padding-right: 1rem; }
-.py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
-.p-3 { padding: 0.75rem; }
-.p-4 { padding: 1rem; }
-.mt-4 { margin-top: 1rem; }
+/* container + padding - using consistent spacing scale */
+.container { 
+  max-width: 1100px; 
+  margin-left: auto; 
+  margin-right: auto; 
+  padding-left: var(--container-padding);
+  padding-right: var(--container-padding);
+}
+.px-4 { padding-left: var(--spacing-4); padding-right: var(--spacing-4); }
+.py-6 { padding-top: var(--spacing-6); padding-bottom: var(--spacing-6); }
+.p-3 { padding: var(--spacing-3); }
+.p-4 { padding: var(--spacing-4); }
+.mt-4 { margin-top: var(--spacing-4); }
 .ml-auto { margin-left: auto; }
 
-/* text / font */
-.text-lg { font-size: 1.125rem; }
-.text-base { font-size: 1rem; }
-.text-xs { font-size: 0.75rem; }
+/* text / font - using typography scale */
+.text-lg { font-size: var(--text-lg); }
+.text-base { font-size: var(--text-base); }
+.text-xs { font-size: var(--text-xs); }
 .text-\[11px\] { font-size: 11px; }
 .font-semibold { font-weight: 600; }
 .font-normal { font-weight: 400; }
+.font-medium { font-weight: 500; }
+.font-bold { font-weight: 700; }
 
 /* sizing */
 .h-full { height: 100%; }
@@ -410,10 +732,12 @@ a:hover {
   .md\:col-span-2 { grid-column: span 2 / span 2; }
 }
 
-/* spacing between children */
-.space-y-2 > * + * { margin-top: 0.5rem; }
-.space-y-4 > * + * { margin-top: 1rem; }
-.space-y-3 > * + * { margin-top: 0.75rem; }
+/* spacing between children - using consistent spacing scale */
+.space-y-2 > * + * { margin-top: var(--spacing-2); }
+.space-y-3 > * + * { margin-top: var(--spacing-3); }
+.space-y-4 > * + * { margin-top: var(--spacing-4); }
+.space-y-6 > * + * { margin-top: var(--spacing-6); }
+.space-y-8 > * + * { margin-top: var(--spacing-8); }
 
 /* lists */
 .list-disc { list-style-type: disc; }
@@ -438,6 +762,80 @@ a:hover {
 }
 
 /* optional: smooth hover scale for images */
-.transition-transform { transition: transform 150ms ease; }
-.duration-300 { transition-duration: 300ms; }
+.transition-transform { transition: transform var(--duration-fast) var(--ease-out); }
 .hover\:scale-105:hover { transform: scale(1.05); }
+
+/* Scale utilities for hover effects */
+.hover\:scale-\[1\.02\]:hover { transform: scale(1.02); }
+.active\:scale-95:active { transform: scale(0.95); }
+
+/* === Additional spacing utilities === */
+.m-0 { margin: 0; }
+.m-1 { margin: var(--spacing-1); }
+.m-2 { margin: var(--spacing-2); }
+.m-3 { margin: var(--spacing-3); }
+.m-4 { margin: var(--spacing-4); }
+.m-6 { margin: var(--spacing-6); }
+.m-8 { margin: var(--spacing-8); }
+
+.p-0 { padding: 0; }
+.p-1 { padding: var(--spacing-1); }
+.p-2 { padding: var(--spacing-2); }
+.p-6 { padding: var(--spacing-6); }
+.p-8 { padding: var(--spacing-8); }
+
+.px-6 { padding-left: var(--spacing-6); padding-right: var(--spacing-6); }
+.px-8 { padding-left: var(--spacing-8); padding-right: var(--spacing-8); }
+.py-2 { padding-top: var(--spacing-2); padding-bottom: var(--spacing-2); }
+.py-3 { padding-top: var(--spacing-3); padding-bottom: var(--spacing-3); }
+.py-8 { padding-top: var(--spacing-8); padding-bottom: var(--spacing-8); }
+.py-12 { padding-top: var(--spacing-12); padding-bottom: var(--spacing-12); }
+
+.mt-2 { margin-top: var(--spacing-2); }
+.mt-3 { margin-top: var(--spacing-3); }
+.mt-6 { margin-top: var(--spacing-6); }
+.mt-8 { margin-top: var(--spacing-8); }
+.mb-2 { margin-bottom: var(--spacing-2); }
+.mb-3 { margin-bottom: var(--spacing-3); }
+.mb-4 { margin-bottom: var(--spacing-4); }
+.mb-12 { margin-bottom: var(--spacing-12); }
+
+.mx-4 { margin-left: var(--spacing-4); margin-right: var(--spacing-4); }
+.mx-6 { margin-left: var(--spacing-6); margin-right: var(--spacing-6); }
+
+/* === Consistent rounded corners === */
+.rounded-sm { border-radius: 0.25rem; }
+.rounded { border-radius: 0.375rem; }
+.rounded-md { border-radius: 0.5rem; }
+.rounded-full { border-radius: 9999px; }
+
+/* === Typography utilities === */
+.text-2xl { font-size: var(--text-2xl); line-height: var(--leading-tight); }
+.text-3xl { font-size: var(--text-3xl); line-height: var(--leading-tight); }
+.text-4xl { font-size: var(--text-4xl); line-height: var(--leading-tight); }
+.text-5xl { font-size: var(--text-5xl); line-height: var(--leading-tight); }
+
+.leading-tight { line-height: var(--leading-tight); }
+.leading-normal { line-height: var(--leading-normal); }
+.leading-relaxed { line-height: var(--leading-relaxed); }
+
+/* === Focus states for accessibility === */
+.focus-ring:focus-visible {
+  outline: none;
+  ring: 3px;
+  ring-color: var(--primary);
+  ring-opacity: 0.5;
+}
+
+/* === Smooth page transitions === */
+.page-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity var(--duration-slow) var(--ease-out),
+              transform var(--duration-slow) var(--ease-out);
+}

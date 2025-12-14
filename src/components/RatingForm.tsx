@@ -17,11 +17,13 @@ export default function RatingForm({
   busy = false,
   initialValues,
   isEditing = false,
+  isLoggedIn = false,
 }: {
   onSubmit: (values: RatingValues) => Promise<void> | void;
   busy?: boolean;
   initialValues?: RatingValues;
   isEditing?: boolean;
+  isLoggedIn?: boolean;
 }) {
   const [vals, setVals] = useState<RatingValues>(
     initialValues || {
@@ -32,6 +34,7 @@ export default function RatingForm({
       comment: "",
     }
   );
+  const [hasSubmitted, setHasSubmitted] = useState(false);
 
   // Update form when initialValues change
   useEffect(() => {
@@ -47,7 +50,7 @@ export default function RatingForm({
   }, [vals]);
 
   const disabled =
-    !vals.taste || !vals.price || !vals.location || !vals.environment || busy;
+    !vals.taste || !vals.price || !vals.location || !vals.environment || busy || (!isLoggedIn && hasSubmitted);
 
   function setField<K extends keyof RatingValues>(k: K, v: RatingValues[K]) {
     setVals((x) => ({ ...x, [k]: v }));
@@ -56,8 +59,16 @@ export default function RatingForm({
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     await onSubmit(vals);
-    setVals({ taste: 0, price: 0, location: 0, environment: 0, comment: "" });
+    // Mark as submitted for logged-out users
+    if (!isLoggedIn) {
+      setHasSubmitted(true);
+    } else {
+      // Reset form for logged-in users
+      setVals({ taste: 0, price: 0, location: 0, environment: 0, comment: "" });
+    }
   }
+
+  const isFormDisabled = !isLoggedIn && hasSubmitted;
 
   return (
     <form className="space-y-5" onSubmit={handleSubmit}>
@@ -65,25 +76,25 @@ export default function RatingForm({
         <div className="py-2 flex items-center justify-between gap-4">
           <span className="w-32 text-sm text-gray-700">Taste</span>
           <div className="star-wrapper">
-            <Stars rating={vals.taste} interactive onRatingChange={(v) => setField("taste", v)} />
+            <Stars rating={vals.taste} interactive={!isFormDisabled} onRatingChange={(v) => setField("taste", v)} />
           </div>
         </div>
         <div className="py-2 flex items-center justify-between gap-4">
           <span className="w-32 text-sm text-gray-700">Price</span>
           <div className="star-wrapper">
-            <Stars rating={vals.price} interactive onRatingChange={(v) => setField("price", v)} />
+            <Stars rating={vals.price} interactive={!isFormDisabled} onRatingChange={(v) => setField("price", v)} />
           </div>
         </div>
         <div className="py-2 flex items-center justify-between gap-4">
           <span className="w-32 text-sm text-gray-700">Location</span>
           <div className="star-wrapper">
-            <Stars rating={vals.location} interactive onRatingChange={(v) => setField("location", v)} />
+            <Stars rating={vals.location} interactive={!isFormDisabled} onRatingChange={(v) => setField("location", v)} />
           </div>
         </div>
         <div className="py-2 flex items-center justify-between gap-4">
           <span className="w-32 text-sm text-gray-700">Environment</span>
           <div className="star-wrapper">
-            <Stars rating={vals.environment} interactive onRatingChange={(v) => setField("environment", v)} />
+            <Stars rating={vals.environment} interactive={!isFormDisabled} onRatingChange={(v) => setField("environment", v)} />
           </div>
         </div>
       </div>
@@ -95,13 +106,19 @@ export default function RatingForm({
           placeholder="What did you like or dislike?"
           value={vals.comment}
           onChange={(e) => setField("comment", e.target.value)}
+          disabled={isFormDisabled}
         />
       </div>
 
       <div className="flex items-center justify-between">
         <p className="text-sm text-gray-500">Overall: {overall}/5</p>
         <Button disabled={disabled}>
-          {busy ? (initialValues ? "Updating…" : "Submitting…") : (initialValues ? "Update rating" : "Submit rating")}
+          {!isLoggedIn && hasSubmitted 
+            ? "Sent" 
+            : busy 
+              ? (initialValues ? "Updating…" : "Submitting…") 
+              : (initialValues ? "Update rating" : "Submit rating")
+          }
         </Button>
       </div>
     </form>

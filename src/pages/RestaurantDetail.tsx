@@ -213,11 +213,11 @@ export function RestaurantDetails({ restaurant, onBack, userId, username }: { re
   return (
     <div className="min-h-screen bg-white">
       <header className="sticky top-0 z-50 border-b bg-white">
-        <div className="container mx-auto flex items-center gap-3 px-4 py-4">
+        <div className="container mx-auto flex items-center gap-3 px-4 py-8">
           <Button variant="ghost" onClick={onBack} className="flex items-center gap-2 text-gray-600 hover:text-orange-500">
             <ArrowLeft size={16} /> Back
           </Button>
-          <h1 className="text-lg font-semibold text-gray-900">{restaurant.name}</h1>
+          <h1 className="text-lg font-semibold text-gray-900 m-0">{restaurant.name}</h1>
         </div>
       </header>
 
@@ -226,17 +226,17 @@ export function RestaurantDetails({ restaurant, onBack, userId, username }: { re
           <div className="md:col-span-2 space-y-4">
           <Card>
             <CardHeader className="!grid-rows-[auto] bg-gradient-to-r from-orange-50 to-orange-50/50 border-b border-orange-100">
-              <div>
-                <div className="flex items-center justify-start gap-3 mb-1">
-                  <CardTitle className="text-gray-900">{restaurant.name}</CardTitle>
-                  <span className="flex items-center gap-2 text-sm font-normal bg-orange-100 px-2.5 py-1 rounded-lg">
+              <div className="space-y-3">
+                <CardTitle className="text-gray-900">{restaurant.name}</CardTitle>
+                <div className="flex flex-col gap-2">
+                  <span className="flex items-center gap-2 text-sm font-normal bg-orange-100 px-2.5 py-1 rounded-lg w-fit">
                     <Star className="h-4 w-4 text-orange-500 fill-orange-500" />
                     <span className="font-semibold text-orange-900">
                       {stats.avg.toFixed(1)} ({stats.count})
                     </span>
                   </span>
+                  <p className="text-sm text-gray-600 font-medium">{restaurant.cuisine}</p>
                 </div>
-                <p className="text-sm text-gray-600 font-medium">{restaurant.cuisine}</p>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -262,9 +262,9 @@ export function RestaurantDetails({ restaurant, onBack, userId, username }: { re
 
           <Card>
             <CardHeader className="bg-gradient-to-r from-orange-50 to-orange-50/50 border-b border-orange-100">
-              <div className="flex items-center justify-start gap-3">
+              <div className="flex flex-col gap-2">
                 <CardTitle className="text-gray-900">Community Averages</CardTitle>
-                <p className="text-xs text-orange-700 font-medium bg-orange-100 px-2 py-1 rounded">Live ratings</p>
+                <p className="text-sm text-orange-700 font-medium bg-orange-100 px-2 py-1 rounded w-fit">Live ratings</p>
               </div>
             </CardHeader>
             <CardContent>
@@ -331,9 +331,9 @@ export function RestaurantDetails({ restaurant, onBack, userId, username }: { re
           <aside className="space-y-4">
             <Card>
               <CardHeader className="bg-gradient-to-r from-orange-50 to-orange-50/50 border-b border-orange-100">
-                <div className="flex items-center gap-3 col-span-full justify-start">
+                <div className="flex flex-col gap-2 col-span-full">
                   <CardTitle className="text-gray-900">Good to know</CardTitle>
-                  <p className="text-xs text-orange-700 font-medium bg-orange-100 px-2 py-1 rounded">Tips from the community</p>
+                  <p className="text-sm text-orange-700 font-medium bg-orange-100 px-2 py-1 rounded w-fit">Tips from the community</p>
                 </div>
               </CardHeader>
               <CardContent>
@@ -478,9 +478,10 @@ function DishRow({ dish, dishStats, onRate, userId }: { dish: MenuItem; dishStat
                   if (rating) {
                     setExistingRating(rating)
                   }
+                  // Reset submitted state after a short delay for logged-in users
+                  setTimeout(() => setSubmitted(false), 2000)
                 }
-                // Reset submitted state after a short delay
-                setTimeout(() => setSubmitted(false), 2000)
+                // For logged-out users, keep submitted state permanently
               } catch (error) {
                 console.error('Error submitting rating:', error)
               }

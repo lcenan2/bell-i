@@ -241,7 +241,7 @@ export function LandingPage({
       <section className="section bg-gradient-to-b from-orange-50 to-white">
         <div className="landing-container">
           <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="hero-text">
+            <div className="hero-text fade-in">
               <h1 className="mb-6">
                 Discover &amp; Rate Your Favorite Restaurants
               </h1>
@@ -251,7 +251,7 @@ export function LandingPage({
               </p>
 
               {/* Stats */}
-              <div className="grid grid-cols-3 gap-6 mt-12">
+              <div className="grid grid-cols-3 gap-6 mt-12 fade-in" style={{ animationDelay: '200ms' }}>
                 <div className="text-center">
                   <div className="text-3xl text-orange-500 font-semibold mb-1">
                     10K+

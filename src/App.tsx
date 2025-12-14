@@ -19,6 +19,7 @@ function App() {
   const [userId, setUserId] = useState<string>('')
   const [userName, setUserName] = useState<string>('')
   const [authLoading, setAuthLoading] = useState(true)
+  const [pageKey, setPageKey] = useState(0)
 
   // Listen for auth state changes
   useEffect(() => {
@@ -64,6 +65,7 @@ function App() {
     if (window.location.pathname !== to) {
       window.history.pushState(null, '', to)
       setPath(to)
+      setPageKey(prev => prev + 1)
       window.scrollTo(0, 0)
     }
   }
@@ -90,23 +92,27 @@ function App() {
 
   if (path === '/login') {
     return (
-      <Login
-        onBack={() => navigate('/')}
-        onLoggedIn={() => {
-          navigate('/profile')
-        }}
-      />
+      <div key={pageKey} className="page-transition">
+        <Login
+          onBack={() => navigate('/')}
+          onLoggedIn={() => {
+            navigate('/profile')
+          }}
+        />
+      </div>
     )
   }
 
   if (path === '/signup') {
     return (
-      <SignUp
-        onBack={() => navigate('/')}
-        onSignedUp={() => {
-          navigate('/profile')
-        }}
-      />
+      <div key={pageKey} className="page-transition">
+        <SignUp
+          onBack={() => navigate('/')}
+          onSignedUp={() => {
+            navigate('/profile')
+          }}
+        />
+      </div>
     )
   }
 
@@ -122,22 +128,28 @@ function App() {
     }
 
     return (
-      <ProfilePage
-        userId={userId}
-        userName={userName}
-        restaurants={restaurants.map((r) => ({
-          id: r.id,
-          name: r.name,
-          location: r.location,
-        }))}
-        onBack={() => navigate('/')}
-        onLogout={handleLogout}
-      />
+      <div key={pageKey} className="page-transition">
+        <ProfilePage
+          userId={userId}
+          userName={userName}
+          restaurants={restaurants.map((r) => ({
+            id: r.id,
+            name: r.name,
+            location: r.location,
+          }))}
+          onBack={() => navigate('/')}
+          onLogout={handleLogout}
+        />
+      </div>
     )
   }
 
   if (path === '/admin') {
-    return <AdminPanel />
+    return (
+      <div key={pageKey} className="page-transition">
+        <AdminPanel />
+      </div>
+    )
   }
 
   const match = path.match(/^\/restaurant\/([^/]+)$/)
@@ -147,7 +159,7 @@ function App() {
 
     if (!restaurant) {
       return (
-        <div className="p-6">
+        <div key={pageKey} className="page-transition p-6">
           <button onClick={() => navigate('/')} className="underline">
             Back
           </button>
@@ -157,17 +169,19 @@ function App() {
     }
 
     return (
-      <RestaurantDetails
-        restaurant={restaurant}
-        onBack={() => navigate('/')}
-        userId={userId}
-        username={userName}
-      />
+      <div key={pageKey} className="page-transition">
+        <RestaurantDetails
+          restaurant={restaurant}
+          onBack={() => navigate('/')}
+          userId={userId}
+          username={userName}
+        />
+      </div>
     )
   }
 
   return (
-    <>
+    <div key={pageKey} className="page-transition">
       <LandingPage
         isLoggedIn={isLoggedIn}
         userName={userName}
@@ -179,7 +193,7 @@ function App() {
         }
         onLogout={handleLogout}
       />
-    </>
+    </div>
   )
 }
 
