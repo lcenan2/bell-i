@@ -214,10 +214,10 @@ export function RestaurantDetails({ restaurant, onBack, userId, username }: { re
     <div className="min-h-screen bg-white">
       <header className="sticky top-0 z-50 border-b bg-white">
         <div className="container mx-auto flex items-center gap-3 px-4 py-4">
-          <Button variant="ghost" onClick={onBack} className="flex items-center gap-2">
+          <Button variant="ghost" onClick={onBack} className="flex items-center gap-2 text-gray-600 hover:text-orange-500">
             <ArrowLeft size={16} /> Back
           </Button>
-          <h1 className="text-lg font-semibold">{restaurant.name}</h1>
+          <h1 className="text-lg font-semibold text-gray-900">{restaurant.name}</h1>
         </div>
       </header>
 
@@ -225,35 +225,35 @@ export function RestaurantDetails({ restaurant, onBack, userId, username }: { re
         <section className="space-y-4 md:grid md:grid-cols-3 md:gap-6 md:space-y-0">
           <div className="md:col-span-2 space-y-4">
           <Card>
-            <CardHeader className="!grid-rows-[auto]">
+            <CardHeader className="!grid-rows-[auto] bg-gradient-to-r from-orange-50 to-orange-50/50 border-b border-orange-100">
               <div>
                 <div className="flex items-center justify-start gap-3 mb-1">
-                  <CardTitle>{restaurant.name}</CardTitle>
-                  <span className="flex items-center gap-2 text-sm font-normal">
-                    <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-                    <span>
+                  <CardTitle className="text-gray-900">{restaurant.name}</CardTitle>
+                  <span className="flex items-center gap-2 text-sm font-normal bg-orange-100 px-2.5 py-1 rounded-lg">
+                    <Star className="h-4 w-4 text-orange-500 fill-orange-500" />
+                    <span className="font-semibold text-orange-900">
                       {stats.avg.toFixed(1)} ({stats.count})
                     </span>
                   </span>
                 </div>
-                <p className="text-sm text-gray-500">{restaurant.cuisine}</p>
+                <p className="text-sm text-gray-600 font-medium">{restaurant.cuisine}</p>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="w-full rounded-lg overflow-hidden h-64 md:h-96 max-h-96">
+              <div className="w-full rounded-xl overflow-hidden h-64 md:h-96 max-h-96 shadow-md ring-1 ring-orange-200/50">
                 <ImageWithFallback
                   src={restaurant.imageUrl}
                   alt={restaurant.name}
                   className="w-full h-full object-cover object-top"
                 />
               </div>
-              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-700">
-                <div className="flex items-center gap-1">
-                  <MapPin size={16} /> <span>{restaurant.location}</span>
+              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-700 bg-orange-50/40 px-4 py-3 rounded-lg border border-orange-100">
+                <div className="flex items-center gap-2 font-medium text-gray-900">
+                  <MapPin size={16} className="text-orange-500" /> <span>{restaurant.location}</span>
                 </div>
-                <div className="flex items-center">
+                <div className="flex items-center gap-1">
                   {Array.from({ length: restaurant.priceLevel }, (_, i) => (
-                    <DollarSign key={i} size={16} className="text-green-600" />
+                    <DollarSign key={i} size={16} className="text-orange-500" />
                   ))}
                 </div>
               </div>
@@ -261,10 +261,10 @@ export function RestaurantDetails({ restaurant, onBack, userId, username }: { re
           </Card>
 
           <Card>
-            <CardHeader>
+            <CardHeader className="bg-gradient-to-r from-orange-50 to-orange-50/50 border-b border-orange-100">
               <div className="flex items-center justify-start gap-3">
-                <CardTitle>Community Averages</CardTitle>
-                <p className="text-sm text-gray-500">Live from ratings</p>
+                <CardTitle className="text-gray-900">Community Averages</CardTitle>
+                <p className="text-xs text-orange-700 font-medium bg-orange-100 px-2 py-1 rounded">Live ratings</p>
               </div>
             </CardHeader>
             <CardContent>
@@ -273,21 +273,37 @@ export function RestaurantDetails({ restaurant, onBack, userId, username }: { re
               ) : stats.count === 0 ? (
                 <p className="text-sm text-gray-500">No ratings yet—be the first!</p>
               ) : (
-                <ul className="grid gap-1 text-sm">
-                  <li>Taste: {stats.taste.toFixed(1)}</li>
-                  <li>Price: {stats.price.toFixed(1)}</li>
-                  <li>Location: {stats.location.toFixed(1)}</li>
-                  <li>Environment: {stats.environment.toFixed(1)}</li>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center gap-3 p-2 bg-gray-50 rounded border border-gray-100">
+                    <Star className="h-4 w-4 text-orange-500 fill-orange-500" />
+                    <span className="font-semibold text-orange-600 w-8 text-right">{stats.taste.toFixed(1)}</span>
+                    <span className="text-gray-600">Taste</span>
+                  </li>
+                  <li className="flex items-center gap-3 p-2 bg-gray-50 rounded border border-gray-100">
+                    <Star className="h-4 w-4 text-orange-500 fill-orange-500" />
+                    <span className="font-semibold text-orange-600 w-8 text-right">{stats.price.toFixed(1)}</span>
+                    <span className="text-gray-600">Price</span>
+                  </li>
+                  <li className="flex items-center gap-3 p-2 bg-gray-50 rounded border border-gray-100">
+                    <Star className="h-4 w-4 text-orange-500 fill-orange-500" />
+                    <span className="font-semibold text-orange-600 w-8 text-right">{stats.location.toFixed(1)}</span>
+                    <span className="text-gray-600">Location</span>
+                  </li>
+                  <li className="flex items-center gap-3 p-2 bg-gray-50 rounded border border-gray-100">
+                    <Star className="h-4 w-4 text-orange-500 fill-orange-500" />
+                    <span className="font-semibold text-orange-600 w-8 text-right">{stats.environment.toFixed(1)}</span>
+                    <span className="text-gray-600">Environment</span>
+                  </li>
                 </ul>
               )}
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader className="!grid-rows-[auto]">
+            <CardHeader className="!grid-rows-[auto] bg-gradient-to-r from-orange-50 to-orange-50/50 border-b border-orange-100">
               <div>
-                <CardTitle>Menu</CardTitle>
-                <p className="text-sm font-medium text-gray-700 mt-1">Rate your favorite dishes</p>
+                <CardTitle className="text-gray-900">Menu</CardTitle>
+                <p className="text-sm font-medium text-orange-700 mt-1">Rate your favorite dishes</p>
               </div>
             </CardHeader>
             <CardContent>
@@ -314,16 +330,19 @@ export function RestaurantDetails({ restaurant, onBack, userId, username }: { re
 
           <aside className="space-y-4">
             <Card>
-              <CardHeader>
-                <div className="flex items-center gap-4 col-span-full justify-start">
-                  <CardTitle>Good to know</CardTitle>
-                  <p className="text-sm text-gray-500">Tips from the community</p>
+              <CardHeader className="bg-gradient-to-r from-orange-50 to-orange-50/50 border-b border-orange-100">
+                <div className="flex items-center gap-3 col-span-full justify-start">
+                  <CardTitle className="text-gray-900">Good to know</CardTitle>
+                  <p className="text-xs text-orange-700 font-medium bg-orange-100 px-2 py-1 rounded">Tips from the community</p>
                 </div>
               </CardHeader>
               <CardContent>
-                <ul className="list-disc space-y-1 pl-5 text-gray-700">
+                <ul className="space-y-2">
                   {restaurant.goodToKnow.map((tip, index) => (
-                    <li key={index}>{tip}</li>
+                    <li key={index} className="flex gap-2 text-sm text-gray-700">
+                      <span className="text-orange-500 font-bold flex-shrink-0">•</span>
+                      <span>{tip}</span>
+                    </li>
                   ))}
                 </ul>
               </CardContent>
@@ -333,10 +352,10 @@ export function RestaurantDetails({ restaurant, onBack, userId, username }: { re
 
         <section className="grid gap-4 md:grid-cols-2">
           <Card>
-            <CardHeader className="!grid-rows-[auto]">
+            <CardHeader className="!grid-rows-[auto] bg-gradient-to-r from-orange-50 to-orange-50/50 border-b border-orange-100">
               <div>
-                <CardTitle>{existingRating ? 'Edit Your Rating' : `Rate ${restaurant.name}`}</CardTitle>
-                <p className="text-sm text-gray-500 mt-6">
+                <CardTitle className="text-gray-900">{existingRating ? 'Edit Your Rating' : `Rate ${restaurant.name}`}</CardTitle>
+                <p className="text-sm text-orange-700 mt-1 font-medium">
                   {existingRating ? 'Update your experience' : 'Share your experience'}
                 </p>
               </div>
@@ -408,45 +427,46 @@ function DishRow({ dish, dishStats, onRate, userId }: { dish: MenuItem; dishStat
   const ratingCount = dishStats?.count ?? 0
 
   return (
-    <div className="border rounded-lg overflow-hidden">
-      <ImageWithFallback
-        src={dish.photoUrl || ''}
-        alt={dish.name}
-        className="w-full h-64 object-cover"
-      />
-      <div className="p-3 space-y-2">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="font-semibold text-sm">{dish.name}</div>
-            {dish.description && <div className="text-xs text-gray-600">{dish.description}</div>}
-            {displayPrice != null && <div className="text-xs text-green-600 font-medium">${displayPrice}</div>}
+    <div className="border border-orange-100/60 rounded-xl overflow-visible hover:shadow-md hover:border-orange-200 transition-all duration-200 bg-white hover:bg-orange-50/30">
+      <div className="relative w-full bg-gray-100" style={{ aspectRatio: '4/3' }}>
+        <ImageWithFallback
+          src={dish.photoUrl || ''}
+          alt={dish.name}
+          className="w-full h-full object-cover rounded-t-xl"
+        />
+        <div className="absolute top-2 right-2 bg-white/95 backdrop-blur-sm px-2.5 py-1.5 rounded-lg border border-orange-100">
+          <div className="flex items-center gap-1 justify-end">
+            <Star className="h-3.5 w-3.5 text-orange-500 fill-orange-500" />
+            <span className="font-semibold text-orange-900 text-sm">{avgRating.toFixed(1)}</span>
           </div>
-          <div className="text-xs text-gray-700 text-right">
-            <div className="flex items-center gap-1 justify-end">
-              <Star className="h-3 w-3 text-yellow-400 fill-yellow-400" />
-              <span>{avgRating.toFixed(1)}</span>
-            </div>
-            <div className="text-[11px] text-gray-500">
-              {ratingCount} rating{ratingCount === 1 ? '' : 's'}
-            </div>
+          <div className="text-[11px] text-gray-600 text-right">
+            {ratingCount} {ratingCount === 1 ? 'rating' : 'ratings'}
           </div>
         </div>
+      </div>
+      <div className="p-4">
+        <div className="mb-4">
+          <div className="font-semibold text-sm text-gray-900 mb-2">{dish.name}</div>
+          {dish.description && <div className="text-xs text-gray-600 line-clamp-2 mb-2">{dish.description}</div>}
+          {displayPrice != null && <div className="text-xs font-medium text-orange-600">${displayPrice}</div>}
+        </div>
 
-        <div className="flex items-center gap-2 text-xs">
-          <span>Your rating:</span>
+        <div className="border-t border-gray-100 pt-3">
+          <div className="flex items-center gap-2 text-xs">
+          <span className="text-gray-600">Your rating:</span>
           <select
-            className="border rounded px-1 py-[2px]"
+            className="border border-orange-200 rounded px-2 py-1 text-xs bg-white hover:border-orange-300 focus:border-orange-400 focus:ring-1 focus:ring-orange-400/20"
             value={value}
             onChange={(e) => setValue(Number(e.target.value))}
           >
             {[1, 2, 3, 4, 5].map((n) => (
               <option key={n} value={n}>
-                {n}
+                {n}★
               </option>
             ))}
           </select>
           <button
-            className="ml-auto px-3 py-1 text-xs rounded bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary"
+            className="ml-auto px-3 py-1 text-xs rounded-md bg-orange-500 text-white hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-orange-500 font-medium transition-colors"
             disabled={submitted || loading}
             onClick={async () => {
               try {
@@ -466,8 +486,9 @@ function DishRow({ dish, dishStats, onRate, userId }: { dish: MenuItem; dishStat
               }
             }}
           >
-            {submitted ? (existingRating ? 'Updated!' : 'Submitted!') : (existingRating ? 'Update' : 'Submit')}
+            {submitted ? (existingRating ? '✓ Updated' : '✓ Sent') : (existingRating ? 'Update' : 'Submit')}
           </button>
+        </div>
         </div>
       </div>
     </div>

@@ -166,17 +166,17 @@ export function ProfilePage({
             </CardHeader>
             <CardContent>
               <div className="space-y-3 text-sm text-gray-700">
-                <div className="flex items-center justify-between">
-                  <span>Restaurant ratings</span>
+                <div className="flex items-center gap-4">
                   <span className="font-semibold">
                     {totalRestaurantRatings}
                   </span>
+                  <span>Restaurant ratings</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span>Dish ratings</span>
+                <div className="flex items-center gap-4">
                   <span className="font-semibold">
                     {totalDishRatings}
                   </span>
+                  <span>Dish ratings</span>
                 </div>
               </div>
             </CardContent>
