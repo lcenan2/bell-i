@@ -1,34 +1,41 @@
 // src/services/dishRatings.ts
-const STORAGE_KEY = "dishRatings";
-function readAll() {
-    try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        return raw ? JSON.parse(raw) : [];
-    }
-    catch {
-        return [];
-    }
-}
-function writeAll(list) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-}
-export function addDishRating(params) {
-    const all = readAll();
+import { db } from "../firebase";
+import { collection, addDoc, serverTimestamp, query, where, getDocs, onSnapshot, } from "firebase/firestore";
+/**
+ * Save a dish rating to Firebase
+ */
+export async function saveDishRating(params) {
     const value = Math.max(1, Math.min(5, Math.round(params.value)));
-    const record = {
-        id: `dr_${all.length}_${Date.now()}`,
+    await addDoc(collection(db, "dishRatings"), {
         dishId: params.dishId,
         restaurantId: params.restaurantId,
         value,
-        createdAt: Date.now(),
-    };
-    all.push(record);
-    writeAll(all);
+        userId: params.userId || null,
+        createdAt: serverTimestamp(),
+    });
 }
-export function getDishStatsForRestaurant(restaurantId) {
-    const all = readAll().filter((r) => r.restaurantId === restaurantId);
+/**
+ * Fetch all ratings for a specific dish
+ */
+export async function fetchDishRatings(dishId) {
+    const q = query(collection(db, "dishRatings"), where("dishId", "==", dishId));
+    const snap = await getDocs(q);
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+}
+/**
+ * Fetch all ratings for all dishes in a restaurant
+ */
+export async function fetchDishRatingsForRestaurant(restaurantId) {
+    const q = query(collection(db, "dishRatings"), where("restaurantId", "==", restaurantId));
+    const snap = await getDocs(q);
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+}
+/**
+ * Get stats (average rating and count) for all dishes in a restaurant
+ */
+export function getDishStatsForRestaurant(ratings) {
     const byDish = new Map();
-    for (const r of all) {
+    for (const r of ratings) {
         if (!byDish.has(r.dishId)) {
             byDish.set(r.dishId, { sum: 0, count: 0 });
         }
@@ -46,6 +53,17 @@ export function getDishStatsForRestaurant(restaurantId) {
     }
     return result;
 }
+/**
+ * Subscribe to real-time updates for all dish ratings in a restaurant
+ */
+export function subscribeToDishRatings(restaurantId, onUpdate) {
+    const q = query(collection(db, "dishRatings"), where("restaurantId", "==", restaurantId));
+    return onSnapshot(q, (snap) => {
+        const ratings = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        onUpdate(ratings);
+    });
+}
 export function getAllDishRatings() {
-    return readAll();
+    // Deprecated: use fetchDishRatingsForRestaurant or subscribeToDishRatings instead
+    return [];
 }
