@@ -3,6 +3,7 @@ import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '../comp
 import {UtensilsCrossed, Star, MapPin, TrendingUp, Users, Award, Search} from 'lucide-react';
 import { ImageWithFallback } from '../components/ImageWithFallback';
 import React, {useMemo, useState} from 'react'
+import { fetchRatings, computeAverages } from '../services/ratings';
 export interface LandingPageProps {
   onGetStarted: () => void;
   onLogin: () => void;
@@ -54,6 +55,28 @@ const restaurants: Restaurant[] = [
     priceLevel: 2,
     imageUrl:
       '/restaurant-images/jurassic-grill.jpeg',
+    location: 'Champaign',
+  },
+  {
+    id: '4',
+    name: 'Sakanaya',
+    cuisine: 'Japanese',
+    rating: 0,
+    reviewCount: 89,
+    priceLevel: 3,
+    imageUrl:
+      '...',
+    location: 'Champaign',
+  },
+  {
+    id: '4',
+    name: "McDonald's",
+    cuisine: 'American',
+    rating: 0,
+    reviewCount: 89,
+    priceLevel: 1,
+    imageUrl:
+      '...',
     location: 'Champaign',
   },
 ];
@@ -112,6 +135,30 @@ export function LandingPage({
     const set = new Set<string>();
     restaurants.forEach((r) => set.add(r.cuisine));
     return Array.from(set);
+  }, []);
+
+  const [ratingStats, setRatingStats] = React.useState<Record<string, any>>({});
+
+  React.useEffect(() => {
+    let mounted = true;
+    async function loadRatings() {
+      try {
+        const entries = await Promise.all(
+          restaurants.map(async (r) => {
+            const rs = await fetchRatings(r.id);
+            return [r.id, computeAverages(rs)];
+          })
+        );
+        if (!mounted) return;
+        setRatingStats(Object.fromEntries(entries));
+      } catch (err) {
+        console.error('Error loading ratings for landing page', err);
+      }
+    }
+    loadRatings();
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const filteredRestaurants = useMemo(() => {
@@ -286,38 +333,51 @@ export function LandingPage({
               {filteredRestaurants.map((r) => (
                 <Card
                   key={r.id}
-                  className="flex h-full flex-col overflow-hidden rounded-xl border bg-white shadow-sm hover:shadow-lg transition-shadow"
+                  className="grid grid-cols-1 md:[grid-template-columns:160px_1fr] h-full overflow-hidden rounded-xl border bg-white shadow-sm hover:shadow-lg transition-shadow"
                   onClick={() => onOpenRestaurant?.(r.id)}
                   role="button"
                   aria-label={`Open ${r.name}`}
                   tabIndex={0}
                 >
-                  {/* IMAGE – forced to same size for every card */}
-                  <ImageWithFallback
-                    src={r.imageUrl}
-                    alt={`${r.name} cover`}
-                    className="w-full h-40 object-cover"
-                  />
+                  {/* IMAGE column (fixed width on md+) */}
+                  <div className="h-40 md:h-40 w-full overflow-hidden">
+                    <ImageWithFallback
+                      src={r.imageUrl}
+                      alt={`${r.name} cover`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
 
-                  {/* TEXT CONTENT */}
-                  <CardHeader className="px-4 pt-4 pb-2">
-                    <CardTitle className="flex items-center justify-between">
-                      <span>{r.name}</span>
-                      <Price level={r.priceLevel} />
-                    </CardTitle>
-                    <CardDescription className="mt-1 flex items-center gap-2 text-sm">
-                      <MapPin size={14} /> {r.location || 'Nearby'}
-                      <span className="mx-1">•</span>
-                      {r.cuisine}
-                    </CardDescription>
-                  </CardHeader>
+                  {/* TEXT column */}
+                  <div className="flex flex-col">
+                    <CardHeader className="px-4 pt-4 pb-2">
+                      <CardTitle className="flex items-center justify-between">
+                        <span>{r.name}</span>
+                        <Price level={r.priceLevel} />
+                      </CardTitle>
+                      <CardDescription className="mt-1 flex items-center gap-2 text-sm">
+                        <MapPin size={14} /> {r.location || 'Nearby'}
+                        <span className="mx-1">•</span>
+                        {r.cuisine}
+                      </CardDescription>
+                    </CardHeader>
 
-                  <CardContent className="mt-auto flex items-center justify-between px-4 pb-4 pt-1">
-                    <Stars rating={r.rating} />
-                    <span className="text-sm text-gray-600">
-                      {r.reviewCount} reviews
-                    </span>
-                  </CardContent>
+                    <CardContent className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 px-4 pb-4 pt-1">
+                      {(() => {
+                        const stats = ratingStats[r.id];
+                        const avg = stats && typeof stats.avg === 'number' && stats.count > 0 ? stats.avg : r.rating;
+                        const count = stats && typeof stats.count === 'number' ? stats.count : r.reviewCount;
+                        return (
+                          <>
+                            <div className="shrink-0">
+                              <Stars rating={avg} />
+                            </div>
+                            <span className="text-sm text-gray-600">{count} reviews</span>
+                          </>
+                        );
+                      })()}
+                    </CardContent>
+                  </div>
                 </Card>
               ))}
             </div>
