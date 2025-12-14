@@ -161,7 +161,7 @@ export const dishes: Dish[] = [
         createdAt: Date.now() - 1 * 24 * 60 * 60 * 1000,
     },
     {
-        id: "d16",
+        id: "d15",
         restaurantId: "4",
         name: "Filet-O-Fish",
         description: "Fried fish filet with tartar sauce and cheese.",
@@ -179,7 +179,7 @@ export const dishes: Dish[] = [
         createdAt: Date.now() - 1 * 24 * 60 * 60 * 1000,
     },
     {
-        id: "d16",
+        id: "d17",
         restaurantId: "5",
         name: "Chirashi",
         description: "Assorted sashimi, cooked vegetables over rice​. served with miso soup.",
@@ -188,7 +188,7 @@ export const dishes: Dish[] = [
         createdAt: Date.now() - 1 * 24 * 60 * 60 * 1000,
     },
     {
-        id: "d16",
+        id: "d18",
         restaurantId: "5",
         name: "Tuna Poke Bowl",
         description: "Tuna, avocado, cucumber, edamame, radish, seaweed salad, hijiki(brown seaweed), pickled egg plant & cucumber, shiitake mushroom with yuzu teriyaki sauce. served with miso soup and rice.",
@@ -197,7 +197,7 @@ export const dishes: Dish[] = [
         createdAt: Date.now() - 1 * 24 * 60 * 60 * 1000,
     },
     {
-        id: "d16",
+        id: "d19",
         restaurantId: "5",
         name: "Salmon Poke Bowl",
         description: "Salmon, avocado, cucumber, edamame, radish, seaweed salad, hijiki(brown seaweed), pickled egg plant & cucumber, shiitake mushroom with sake-miso sauce. served with miso soup and rice.",
