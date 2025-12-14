@@ -18,6 +18,7 @@ export type RatingDoc = {
   comment?: string;
   createdAt: any;   // Firestore timestamp
   userId?: string;  // optional if you add auth
+  username?: string; // username of the user who posted
 };
 
 export async function saveRating(r: Omit<RatingDoc, "createdAt">) {
@@ -31,6 +32,14 @@ export async function fetchRatings(restaurantId: string) {
   const q = query(collection(db, "ratings"), where("restaurantId", "==", restaurantId));
   const snap = await getDocs(q);
   return snap.docs.map((d) => ({ id: d.id, ...d.data() } as RatingDoc));
+}
+
+export async function fetchReviewsWithComments(restaurantId: string) {
+  const q = query(collection(db, "ratings"), where("restaurantId", "==", restaurantId));
+  const snap = await getDocs(q);
+  return snap.docs
+    .map((d) => ({ id: d.id, ...d.data() } as RatingDoc))
+    .filter(r => r.comment && r.comment.trim() !== "");
 }
 
 export async function fetchRatingsByUser(userId: string) {

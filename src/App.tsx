@@ -160,6 +160,8 @@ function App() {
       <RestaurantDetails
         restaurant={restaurant}
         onBack={() => navigate('/')}
+        userId={userId}
+        username={userName}
       />
     )
   }
