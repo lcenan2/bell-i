@@ -76,6 +76,20 @@ export async function updateDishRating(ratingId: string, value: number): Promise
   await updateDoc(ratingRef, {
     value: normalizedValue,
   });
+
+  // Also update the local copy so it's in sync
+  try {
+    const LOCAL_KEY = "belli:dishRatings";
+    const prevRaw = localStorage.getItem(LOCAL_KEY);
+    const prev: DishRating[] = prevRaw ? JSON.parse(prevRaw) : [];
+    const index = prev.findIndex(r => r.id === ratingId);
+    if (index !== -1) {
+      prev[index].value = normalizedValue;
+      localStorage.setItem(LOCAL_KEY, JSON.stringify(prev));
+    }
+  } catch (e) {
+    console.warn("Failed to update local dish rating", e);
+  }
 }
 
 /**
@@ -92,6 +106,15 @@ export async function fetchDishRatings(dishId: string): Promise<DishRating[]> {
  */
 export async function fetchDishRatingsForRestaurant(restaurantId: string): Promise<DishRating[]> {
   const q = query(collection(db, "dishRatings"), where("restaurantId", "==", restaurantId));
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as DishRating));
+}
+
+/**
+ * Fetch all dish ratings by a specific user
+ */
+export async function fetchDishRatingsByUser(userId: string): Promise<DishRating[]> {
+  const q = query(collection(db, "dishRatings"), where("userId", "==", userId));
   const snap = await getDocs(q);
   return snap.docs.map((d) => ({ id: d.id, ...d.data() } as DishRating));
 }
