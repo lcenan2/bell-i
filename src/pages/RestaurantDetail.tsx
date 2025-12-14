@@ -193,7 +193,7 @@ export function RestaurantDetails({ restaurant, onBack, userId, username }: { re
           <Card>
             <CardHeader className="!grid-rows-[auto]">
               <div>
-                <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center justify-start gap-3 mb-1">
                   <CardTitle>{restaurant.name}</CardTitle>
                   <span className="flex items-center gap-2 text-sm font-normal">
                     <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
@@ -210,7 +210,7 @@ export function RestaurantDetails({ restaurant, onBack, userId, username }: { re
                 <ImageWithFallback
                   src={restaurant.imageUrl}
                   alt={restaurant.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-top"
                 />
               </div>
               <div className="flex flex-wrap items-center gap-4 text-sm text-gray-700">
@@ -228,7 +228,7 @@ export function RestaurantDetails({ restaurant, onBack, userId, username }: { re
 
           <Card>
             <CardHeader>
-              <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center justify-start gap-3">
                 <CardTitle>Community Averages</CardTitle>
                 <p className="text-sm text-gray-500">Live from ratings</p>
               </div>
