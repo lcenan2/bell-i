@@ -2,13 +2,14 @@ import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-run
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from "../components/Card";
 import { Button } from "../components/Button";
 import { ImageWithFallback } from "../components/ImageWithFallback";
+import RecommendedDishes from "../components/RecommendedDishes";
 import { MapPin, Star, DollarSign, ArrowLeft } from "lucide-react";
 import RatingForm from "../components/RatingForm";
 import { fetchRatings, saveRating, computeAverages } from "../services/ratings";
 import { useEffect, useMemo, useState } from "react";
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
-import RecommendedDishes from '../components/RecommendedDishes';
+
 export function RestaurantDetails({ restaurant, onBack }) {
     const [loading, setLoading] = useState(true);
     const [ratings, setRatings] = useState([]);

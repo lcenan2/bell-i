@@ -26,6 +26,12 @@ export function RestaurantCard({
   location,
   onClick
 }: RestaurantCardProps) {
+  // Use a single default image for all restaurants so every card shows the same picture.
+  // This avoids broken or missing images from external sources.
+  const DEFAULT_RESTAURANT_IMAGE =
+    'https://images.unsplash.com/photo-1552566626-52f8b828add9?q=80&w=1200&auto=format&fit=crop';
+
+  const displayImage = DEFAULT_RESTAURANT_IMAGE;
   return (
     <Card 
       className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
@@ -35,7 +41,7 @@ export function RestaurantCard({
 
       <div className="aspect-video w-full overflow-hidden">
         <ImageWithFallback 
-          src={imageUrl} 
+          src={displayImage} 
           alt={name}
           className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
         />
