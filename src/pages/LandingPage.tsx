@@ -59,17 +59,6 @@ const restaurants: Restaurant[] = [
   },
   {
     id: '4',
-    name: 'Sakanaya',
-    cuisine: 'Japanese',
-    rating: 0,
-    reviewCount: 89,
-    priceLevel: 3,
-    imageUrl:
-      '/restaurant-images/sakanaya.jpeg',
-    location: 'Champaign',
-  },
-  {
-    id: '5',
     name: "McDonald's",
     cuisine: 'American',
     rating: 0,
@@ -77,6 +66,17 @@ const restaurants: Restaurant[] = [
     priceLevel: 1,
     imageUrl:
       '/restaurant-images/mcdonalds.jpeg',
+    location: 'Champaign',
+  },
+  {
+    id: '5',
+    name: 'Sakanaya',
+    cuisine: 'Japanese',
+    rating: 0,
+    reviewCount: 89,
+    priceLevel: 3,
+    imageUrl:
+      '/restaurant-images/sakanaya.jpeg',
     location: 'Champaign',
   },
 ];

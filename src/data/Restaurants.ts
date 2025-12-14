@@ -46,17 +46,6 @@ export const restaurants: Restaurant[] = [
   }, 
   {
         id: "4",
-        name: "Sakanaya",
-        cuisine: "Japanese",
-        rating: 3,
-        reviewCount: 100,
-        priceLevel: 3,
-        imageUrl: "/restaurant-images/sakanaya.jpeg",
-        location: "403 E Green St, Champaign, IL 61820",
-        likes: 0,
-    }, 
-    {
-        id: "5",
         name: "Mcdonalds",
         cuisine: "American",
         rating: 1,
@@ -66,4 +55,16 @@ export const restaurants: Restaurant[] = [
         location: "616 E Green St, Champaign, IL 61820",
         likes: 0,
     }, 
+  {
+        id: "5",
+        name: "Sakanaya",
+        cuisine: "Japanese",
+        rating: 3,
+        reviewCount: 100,
+        priceLevel: 3,
+        imageUrl: "/restaurant-images/sakanaya.jpeg",
+        location: "403 E Green St, Champaign, IL 61820",
+        likes: 0,
+    }, 
+    
 ];
