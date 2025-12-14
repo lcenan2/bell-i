@@ -250,6 +250,7 @@ export function RestaurantDetails({ restaurant, onBack }: { restaurant: Restaura
 
 function DishRow({ dish, dishStats, onRate }: { dish: MenuItem; dishStats: DishStats; onRate: (dishId: string, value: number) => void }) {
   const [value, setValue] = useState(5)
+  const [submitted, setSubmitted] = useState(false)
 
   // Normalize price from either dollars (floats/ints) or cents (integers >= 100).
   const getDisplayPrice = (p?: number): string | null => {
@@ -306,13 +307,20 @@ function DishRow({ dish, dishStats, onRate }: { dish: MenuItem; dishStats: DishS
               </option>
             ))}
           </select>
-          <Button
-            size="sm"
-            className="ml-auto"
-            onClick={() => onRate(dish.id, value)}
+          <button
+            className="ml-auto px-3 py-1 text-xs rounded bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary"
+            disabled={submitted}
+            onClick={async () => {
+              try {
+                await onRate(dish.id, value)
+                setSubmitted(true)
+              } catch (error) {
+                console.error('Error submitting rating:', error)
+              }
+            }}
           >
-            Submit
-          </Button>
+            {submitted ? 'Submitted' : 'Submit'}
+          </button>
         </div>
       </div>
     </div>
