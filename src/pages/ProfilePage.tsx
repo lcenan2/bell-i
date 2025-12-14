@@ -154,37 +154,35 @@ export function ProfilePage({
       </nav>
 
       <main className="section">
-        <div className="landing-container grid gap-6 lg:grid-cols-3">
-          {/* Left column: summary card */}
-          <div className="lg:col-span-1">
-            <Card>
-              <CardHeader>
-                <CardTitle>Your Stats</CardTitle>
-                <CardDescription>
-                  Overview of your activity on bell-i.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3 text-sm text-gray-700">
-                  <div className="flex items-center justify-between">
-                    <span>Restaurant ratings</span>
-                    <span className="font-semibold">
-                      {totalRestaurantRatings}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>Dish ratings (this device)</span>
-                    <span className="font-semibold">
-                      {totalDishRatings}
-                    </span>
-                  </div>
+        <div className="landing-container space-y-6">
+          {/* Summary card */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Your Stats</CardTitle>
+              <CardDescription>
+                Overview of your activity on bell-i.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3 text-sm text-gray-700">
+                <div className="flex items-center justify-between">
+                  <span>Restaurant ratings</span>
+                  <span className="font-semibold">
+                    {totalRestaurantRatings}
+                  </span>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+                <div className="flex items-center justify-between">
+                  <span>Dish ratings (this device)</span>
+                  <span className="font-semibold">
+                    {totalDishRatings}
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-          {/* Right column: history */}
-          <div className="lg:col-span-2 space-y-6">
+          {/* History section - side by side */}
+          <div className="grid gap-6 md:grid-cols-2">
             {/* Restaurant rating history */}
             <Card>
               <CardHeader>
@@ -255,13 +253,13 @@ export function ProfilePage({
                             <div className="text-gray-600">
                               <span className="mr-2">
                                 Taste: <strong>{r.taste}</strong>
-                              </span>
+                              </span>{" "}
                               <span className="mr-2">
                                 Price: <strong>{r.price}</strong>
-                              </span>
+                              </span>{" "}
                               <span className="mr-2">
                                 Location: <strong>{r.location}</strong>
-                              </span>
+                              </span>{" "}
                               <span>
                                 Environment: <strong>{r.environment}</strong>
                               </span>
