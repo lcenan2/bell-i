@@ -32,7 +32,7 @@ const restaurants: Restaurant[] = [
     rating: 4.5,
     reviewCount: 127,
     priceLevel: 2,
-    imageUrl: 'data:image/jpeg;base64,...(truncated for brevity)...',
+    imageUrl: '/restaurant-images/burrito-king.jpeg',
     location: 'Champaign',
   },
   {
@@ -42,7 +42,7 @@ const restaurants: Restaurant[] = [
     rating: 4.7,
     reviewCount: 203,
     priceLevel: 2,
-    imageUrl: 'data:image/jpeg;base64,...(truncated for brevity)...',
+    imageUrl: '/restaurant-images/chopstix.jpeg',
     location: 'Champaign',
   },
   {
@@ -53,7 +53,7 @@ const restaurants: Restaurant[] = [
     reviewCount: 89,
     priceLevel: 2,
     imageUrl:
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrSmXkxBih3yWh0eIhrFy_xOBu069fhhF5Iw&s',
+      '/restaurant-images/jurassic-grill.jpeg',
     location: 'Champaign',
   },
 ];
