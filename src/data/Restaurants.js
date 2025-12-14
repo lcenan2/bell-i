@@ -42,7 +42,7 @@ export const restaurants = [
         imageUrl: "/restaurant-images/mcdonalds.jpeg",
         location: "616 E Green St, Champaign, IL 61820",
         likes: 0,
-    }, 
+    },
     {
         id: "5",
         name: "Sakanaya",
@@ -53,6 +53,5 @@ export const restaurants = [
         imageUrl: "/restaurant-images/sakanaya.jpeg",
         location: "403 E Green St, Champaign, IL 61820",
         likes: 0,
-    }, 
-    
+    },
 ];
