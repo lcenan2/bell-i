@@ -8,6 +8,7 @@ export interface Restaurant {
     imageUrl: string;
     location: string;
     likes: number;
+    goodToKnow: string[];
 }
 
 export const restaurants: Restaurant[] = [
@@ -21,6 +22,7 @@ export const restaurants: Restaurant[] = [
     imageUrl: "/restaurant-images/burrito-king.jpeg",
     location: "408 E Green St, Champaign, IL 61820",
     likes: 0,
+    goodToKnow: ["Open late", "Large portions", "Quick service"],
   },
   {
     id: "3",
@@ -32,6 +34,7 @@ export const restaurants: Restaurant[] = [
     imageUrl: "/restaurant-images/jurassic-grill.jpeg",
     location: "404 E Green St, Champaign, IL 61820",
     likes: 0,
+    goodToKnow: ["Late-night favorite", "Food trucks", "Free topings"],
   },
   {
     id: "2",
@@ -43,6 +46,7 @@ export const restaurants: Restaurant[] = [
     imageUrl: "/restaurant-images/chopstix.jpeg",
     location: "202 E Green St, Champaign, IL 61820",
     likes: 0,
+    goodToKnow: ["Fast Chinese takeout", "Big portions", "Good value"],
   }, 
   {
         id: "4",
@@ -54,6 +58,7 @@ export const restaurants: Restaurant[] = [
         imageUrl: "/restaurant-images/mcdonalds.jpeg",
         location: "616 E Green St, Champaign, IL 61820",
         likes: 0,
+        goodToKnow: ["Fast and reliable", "Cheap deals on the app", "Late-night options"],
     }, 
   {
         id: "5",
@@ -65,6 +70,7 @@ export const restaurants: Restaurant[] = [
         imageUrl: "/restaurant-images/sakanaya.jpeg",
         location: "403 E Green St, Champaign, IL 61820",
         likes: 0,
+        goodToKnow: ["Fresh sushi", "Quality fish", "Slightly pricier"],
     }, 
     
 ];
