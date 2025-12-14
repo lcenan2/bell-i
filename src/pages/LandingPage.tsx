@@ -326,7 +326,7 @@ export function LandingPage({
       </section>
 
       {/* Features */}
-      <section id="features" className="section-muted">
+      <section id="features" className="section-muted" style={{ scrollMarginTop: '300px' }}>
         <div className="landing-container grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card>
             <CardHeader>
