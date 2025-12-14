@@ -331,9 +331,9 @@ export function LandingPage({
           <Card>
             <CardHeader>
               <TrendingUp />
-              <CardTitle>Smart Discovery</CardTitle>
+              <CardTitle>Trending Picks</CardTitle>
               <CardDescription>
-                Personalized picks based on your tastes.
+                See what dishes and restaurants are top-rated right now.
               </CardDescription>
             </CardHeader>
           </Card>
@@ -349,9 +349,9 @@ export function LandingPage({
           <Card>
             <CardHeader>
               <Award />
-              <CardTitle>Top Lists</CardTitle>
+              <CardTitle>Dish-Level Ratings</CardTitle>
               <CardDescription>
-                See what’s trending in your city.
+                Rate individual menu items, not just restaurants.
               </CardDescription>
             </CardHeader>
           </Card>
@@ -364,8 +364,8 @@ export function LandingPage({
           <h2 className="section-title mb-6">How It Works</h2>
           <ol className="list-decimal pl-6 space-y-2 text-gray-700 text-left max-w-xl mx-auto">
             <li>Sign in or create a free account.</li>
-            <li>Search by cuisine, price, or vibe.</li>
-            <li>Rate places you try and share photos.</li>
+            <li>Search by cuisine, price, or rating.</li>
+            <li>Rate places you try and share your experience.</li>
           </ol>
         </div>
       </section>
@@ -375,7 +375,7 @@ export function LandingPage({
         <div className="landing-container">
           <h2 className="section-title mb-6">Testimonials</h2>
           <p className="text-gray-700 text-center max-w-xl mx-auto">
-            “bell-i helped me find my favorite ramen spot in minutes.” — A happy
+            “bell-i helped me find a dinner spot in minutes.” — A happy
             user
           </p>
         </div>
