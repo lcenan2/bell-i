@@ -9,6 +9,7 @@ import { fetchRatings, saveRating, computeAverages } from "../services/ratings";
 import { useEffect, useMemo, useState } from "react";
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
+import { dishes as localDishes } from '../data/Dish';
 
 export function RestaurantDetails({ restaurant, onBack }) {
     const [loading, setLoading] = useState(true);
@@ -30,9 +31,25 @@ export function RestaurantDetails({ restaurant, onBack }) {
                     id: doc.id,
                     ...doc.data()
                 }));
+                // If local dishes exist for this restaurant and we're in development,
+                // prefer them so edits to `src/data/Dish.ts`/`.js` show immediately.
+                const localForThis = (Array.isArray(localDishes) ? localDishes : [])
+                    .filter(d => String(d.restaurantId).trim() === String(restaurant.id).trim());
+                const finalMenu = (localForThis.length > 0 && process.env.NODE_ENV !== 'production')
+                    ? localForThis.map(d => ({
+                        id: String(d.id),
+                        name: d.name,
+                        description: d.description || '',
+                        priceCents: d.priceCents || 0,
+                        photoUrl: d.photoUrl || '',
+                        likes: 0,
+                        averageRating: d.averageRating || 0,
+                        ratingCount: d.ratingCount || 0,
+                      }))
+                    : menuData;
                 if (mounted) {
                     setRatings(rs);
-                    setMenu(menuData);
+                    setMenu(finalMenu);
                     setLoading(false);
                 }
             }
@@ -75,5 +92,18 @@ export function RestaurantDetails({ restaurant, onBack }) {
 }
 function DishRow({ dish, onRate }) {
     const [value, setValue] = useState(5);
-    return (_jsxs("div", { className: "border rounded-lg overflow-hidden", children: [_jsx(ImageWithFallback, { src: dish.photoUrl, alt: dish.name, className: "w-full h-32 object-cover" }), _jsxs("div", { className: "p-3 space-y-2", children: [_jsxs("div", { className: "flex items-center justify-between", children: [_jsxs("div", { children: [_jsx("div", { className: "font-semibold text-sm", children: dish.name }), dish.description && (_jsx("div", { className: "text-xs text-gray-600", children: dish.description })), dish.priceCents && (_jsxs("div", { className: "text-xs text-green-600 font-medium", children: ["$", (dish.priceCents / 100).toFixed(2)] }))] }), _jsxs("div", { className: "text-xs text-gray-700 text-right", children: [_jsxs("div", { className: "flex items-center gap-1 justify-end", children: [_jsx(Star, { className: "h-3 w-3 text-yellow-400 fill-yellow-400" }), _jsx("span", { children: dish.averageRating.toFixed(1) })] }), _jsxs("div", { className: "text-[11px] text-gray-500", children: [dish.ratingCount, " rating", dish.ratingCount === 1 ? "" : "s"] })] })] }), _jsxs("div", { className: "flex items-center gap-2 text-xs", children: [_jsx("span", { children: "Your rating:" }), _jsx("select", { className: "border rounded px-1 py-[2px]", value: value, onChange: (e) => setValue(Number(e.target.value)), children: [1, 2, 3, 4, 5].map((n) => (_jsx("option", { value: n, children: n }, n))) }), _jsx(Button, { size: "sm", className: "ml-auto", onClick: () => onRate(dish.id, value), children: "Submit" })] })] })] }));
+    // Normalize price from either dollars (floats/ints) or cents (integers >= 100).
+    const getDisplayPrice = (p) => {
+        if (p == null) return null;
+        const num = Number(p);
+        if (Number.isNaN(num)) return null;
+        // Non-integers are already dollars (e.g., 12.99)
+        if (!Number.isInteger(num)) return num.toFixed(2);
+        // Small integers (<100) are dollar values in seed data (e.g., 13 -> $13.00)
+        if (Math.abs(num) < 100) return num.toFixed(2);
+        // Larger integers are cents from Firestore (e.g., 1299 -> $12.99)
+        return (num / 100).toFixed(2);
+    };
+    const displayPrice = getDisplayPrice(dish.priceCents);
+    return (_jsxs("div", { className: "border rounded-lg overflow-hidden", children: [_jsx(ImageWithFallback, { src: dish.photoUrl, alt: dish.name, className: "w-full h-64 object-cover" }), _jsxs("div", { className: "p-3 space-y-2", children: [_jsxs("div", { className: "flex items-center justify-between", children: [_jsxs("div", { children: [_jsx("div", { className: "font-semibold text-sm", children: dish.name }), dish.description && (_jsx("div", { className: "text-xs text-gray-600", children: dish.description })), displayPrice != null && (_jsxs("div", { className: "text-xs text-green-600 font-medium", children: ["$", displayPrice] }))] }), _jsxs("div", { className: "text-xs text-gray-700 text-right", children: [_jsxs("div", { className: "flex items-center gap-1 justify-end", children: [_jsx(Star, { className: "h-3 w-3 text-yellow-400 fill-yellow-400" }), _jsx("span", { children: dish.averageRating.toFixed(1) })] }), _jsxs("div", { className: "text-[11px] text-gray-500", children: [dish.ratingCount, " rating", dish.ratingCount === 1 ? "" : "s"] })] })] }), _jsxs("div", { className: "flex items-center gap-2 text-xs", children: [_jsx("span", { children: "Your rating:" }), _jsx("select", { className: "border rounded px-1 py-[2px]", value: value, onChange: (e) => setValue(Number(e.target.value)), children: [1, 2, 3, 4, 5].map((n) => (_jsx("option", { value: n, children: n }, n))) }), _jsx(Button, { size: "sm", className: "ml-auto", onClick: () => onRate(dish.id, value), children: "Submit" })] })] })] }));
 }
