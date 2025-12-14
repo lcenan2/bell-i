@@ -221,8 +221,9 @@ export function RestaurantDetails({ restaurant, onBack, userId, username }: { re
         </div>
       </header>
 
-      <main className="container mx-auto grid gap-6 px-4 py-6 md:grid-cols-3">
-        <section className="md:col-span-2 space-y-4">
+      <main className="container mx-auto px-4 py-6 space-y-6">
+        <section className="space-y-4 md:grid md:grid-cols-3 md:gap-6 md:space-y-0">
+          <div className="md:col-span-2 space-y-4">
           <Card>
             <CardHeader className="!grid-rows-[auto]">
               <div>
@@ -309,9 +310,28 @@ export function RestaurantDetails({ restaurant, onBack, userId, username }: { re
               )}
             </CardContent>
           </Card>
+          </div>
+
+          <aside className="space-y-4">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center gap-4 col-span-full justify-start">
+                  <CardTitle>Good to know</CardTitle>
+                  <p className="text-sm text-gray-500">Tips from the community</p>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <ul className="list-disc space-y-1 pl-5 text-gray-700">
+                  {restaurant.goodToKnow.map((tip, index) => (
+                    <li key={index}>{tip}</li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          </aside>
         </section>
 
-        <aside className="space-y-4">
+        <section className="grid gap-4 md:grid-cols-2">
           <Card>
             <CardHeader className="!grid-rows-[auto]">
               <div>
@@ -336,24 +356,10 @@ export function RestaurantDetails({ restaurant, onBack, userId, username }: { re
             </CardContent>
           </Card>
 
-          <ReviewsList reviews={reviews} />
-
-          <Card>
-            <CardHeader>
-              <div className="flex items-center gap-4 col-span-full justify-start">
-                <CardTitle>Good to know</CardTitle>
-                <p className="text-sm text-gray-500">Tips from the community</p>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <ul className="list-disc space-y-1 pl-5 text-gray-700">
-                {restaurant.goodToKnow.map((tip, index) => (
-                  <li key={index}>{tip}</li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
-        </aside>
+          <div>
+            <ReviewsList reviews={reviews} />
+          </div>
+        </section>
       </main>
     </div>
   )
