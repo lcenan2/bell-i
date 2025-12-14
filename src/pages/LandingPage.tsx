@@ -162,7 +162,8 @@ export function LandingPage({
   }, []);
 
   const filteredRestaurants = useMemo(() => {
-    return restaurants.filter((r) => {
+    // First, filter according to the active filters
+    const filtered = restaurants.filter((r) => {
       if (cuisineFilter !== 'all' && r.cuisine !== cuisineFilter) {
         return false;
       }
@@ -176,6 +177,18 @@ export function LandingPage({
         return false;
       }
       return true;
+    });
+
+    // Then sort by overall rating descending (highest first). We don't mutate the
+    // original `restaurants` array — we sort a shallow copy of the filtered list.
+    return filtered.slice().sort((a, b) => {
+      const aStats = ratingStats[a.id];
+      const bStats = ratingStats[b.id];
+      const aAvg = aStats && typeof aStats.avg === 'number' && aStats.count > 0 ? aStats.avg : a.rating;
+      const bAvg = bStats && typeof bStats.avg === 'number' && bStats.count > 0 ? bStats.avg : b.rating;
+      // Descending order: b - a
+      if (bAvg === aAvg) return 0;
+      return bAvg - aAvg;
     });
   }, [cuisineFilter, priceFilter, minRating, ratingStats]);
   return (
