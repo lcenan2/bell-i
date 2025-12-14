@@ -232,7 +232,7 @@ export function LandingPage({
               <div className="flex flex-col">
                 <label className="text-xs text-gray-500 mb-1">Cuisine</label>
                 <select
-                  className="border rounded-full px-3 py-1 text-sm"
+                  className="border rounded-md px-3 py-1 text-sm h-9 w-32 appearance-none bg-white"
                   value={cuisineFilter}
                   onChange={(e) => setCuisineFilter(e.target.value)}
                 >
@@ -249,7 +249,7 @@ export function LandingPage({
               <div className="flex flex-col">
                 <label className="text-xs text-gray-500 mb-1">Price</label>
                 <select
-                  className="border rounded-full px-3 py-1 text-sm"
+                  className="border rounded-md px-3 py-1 text-sm h-9 w-24 appearance-none bg-white"
                   value={priceFilter}
                   onChange={(e) => setPriceFilter(e.target.value)}
                 >
@@ -265,7 +265,7 @@ export function LandingPage({
               <div className="flex flex-col">
                 <label className="text-xs text-gray-500 mb-1">Min rating</label>
                 <select
-                  className="border rounded-full px-3 py-1 text-sm"
+                  className="border rounded-md px-3 py-1 text-sm h-9 w-28 appearance-none bg-white"
                   value={minRating}
                   onChange={(e) => setMinRating(e.target.value)}
                 >

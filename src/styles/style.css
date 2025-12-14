@@ -2,6 +2,17 @@
 .svg-block { display: block; }
 .no-leading { line-height: 0; }
 
+/* Normalize select height and appearance to match input sizing */
+select {
+  height: 2.25rem;
+  min-height: 2.25rem;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  vertical-align: middle;
+}
+select::-ms-expand { display: none; }
+
 /* Ensure star wrappers don't introduce baseline gap */
 .star-wrapper { display: inline-block; vertical-align: middle; line-height: 0; }
 /* focus-visible ring with a subtle offset */
