@@ -181,17 +181,19 @@ export function RestaurantDetails({ restaurant, onBack }: { restaurant: Restaura
       <main className="container mx-auto grid gap-6 px-4 py-6 md:grid-cols-3">
         <section className="md:col-span-2 space-y-4">
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <span>{restaurant.name}</span>
-                <span className="flex items-center gap-2 text-sm font-normal">
-                  <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-                  <span>
-                    {stats.avg.toFixed(1)} ({stats.count})
+            <CardHeader className="!grid-rows-[auto]">
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <CardTitle>{restaurant.name}</CardTitle>
+                  <span className="flex items-center gap-2 text-sm font-normal">
+                    <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
+                    <span>
+                      {stats.avg.toFixed(1)} ({stats.count})
+                    </span>
                   </span>
-                </span>
-              </CardTitle>
-              <CardDescription>{restaurant.cuisine}</CardDescription>
+                </div>
+                <p className="text-sm text-gray-500">{restaurant.cuisine}</p>
+              </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="w-full rounded-lg overflow-hidden h-64 md:h-96 max-h-96">
@@ -216,8 +218,10 @@ export function RestaurantDetails({ restaurant, onBack }: { restaurant: Restaura
 
           <Card>
             <CardHeader>
-              <CardTitle>Community Averages</CardTitle>
-              <CardDescription>Live from ratings</CardDescription>
+              <div className="flex items-center justify-between gap-4">
+                <CardTitle>Community Averages</CardTitle>
+                <p className="text-sm text-gray-500">Live from ratings</p>
+              </div>
             </CardHeader>
             <CardContent>
               {loading ? (
@@ -236,9 +240,11 @@ export function RestaurantDetails({ restaurant, onBack }: { restaurant: Restaura
           </Card>
 
           <Card>
-            <CardHeader>
-              <CardTitle>Menu</CardTitle>
-              <CardDescription>Rate your favorite dishes</CardDescription>
+            <CardHeader className="!grid-rows-[auto]">
+              <div>
+                <CardTitle>Menu</CardTitle>
+                <p className="text-sm font-medium text-gray-700 mt-1">Rate your favorite dishes</p>
+              </div>
             </CardHeader>
             <CardContent>
               {loading ? (
@@ -263,9 +269,11 @@ export function RestaurantDetails({ restaurant, onBack }: { restaurant: Restaura
 
         <aside className="space-y-4">
           <Card>
-            <CardHeader>
-              <CardTitle>Rate {restaurant.name}</CardTitle>
-              <CardDescription>Share your experience</CardDescription>
+            <CardHeader className="!grid-rows-[auto]">
+              <div>
+                <CardTitle>Rate {restaurant.name}</CardTitle>
+                <p className="text-sm text-gray-500 mt-6">Share your experience</p>
+              </div>
             </CardHeader>
             <CardContent>
               <RatingForm onSubmit={handleSubmit} busy={loading} />
@@ -274,8 +282,10 @@ export function RestaurantDetails({ restaurant, onBack }: { restaurant: Restaura
 
           <Card>
             <CardHeader>
-              <CardTitle>Good to know</CardTitle>
-              <CardDescription>Tips from the community</CardDescription>
+              <div className="flex items-center gap-4 col-span-full justify-start">
+                <CardTitle>Good to know</CardTitle>
+                <p className="text-sm text-gray-500">Tips from the community</p>
+              </div>
             </CardHeader>
             <CardContent>
               <ul className="list-disc space-y-1 pl-5 text-gray-700">
