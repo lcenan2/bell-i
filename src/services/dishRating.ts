@@ -16,7 +16,7 @@ export interface DishRating {
   dishId: string;
   restaurantId: string;
   value: number;      // 1..5
-  createdAt: any;     // Firestore timestamp
+  createdAt: any;     // Firestore timestamp or number (local)
   userId?: string;    // optional if you add auth
 }
 
@@ -42,6 +42,27 @@ export async function saveDishRating(params: {
     userId: params.userId || null,
     createdAt: serverTimestamp(),
   });
+
+  // Also store a local copy so Profile Page can show
+  // "Dish ratings (this device)" without requiring auth.
+  try {
+    const LOCAL_KEY = "belli:dishRatings";
+    const prevRaw = localStorage.getItem(LOCAL_KEY);
+    const prev: DishRating[] = prevRaw ? JSON.parse(prevRaw) : [];
+    const localEntry: DishRating = {
+      id: `local-${Date.now()}-${params.dishId}`,
+      dishId: params.dishId,
+      restaurantId: params.restaurantId,
+      value,
+      createdAt: Date.now(),
+      userId: params.userId,
+    };
+    prev.push(localEntry);
+    localStorage.setItem(LOCAL_KEY, JSON.stringify(prev));
+  } catch (e) {
+    // non-fatal
+    console.warn("Failed to save local dish rating", e);
+  }
 }
 
 /**
@@ -103,7 +124,15 @@ export function subscribeToDishRatings(
 }
 
 export function getAllDishRatings(): DishRating[] {
-  // Deprecated: use fetchDishRatingsForRestaurant or subscribeToDishRatings instead
-  return [];
+  // Read local-only dish ratings for this device.
+  try {
+    const LOCAL_KEY = "belli:dishRatings";
+    const raw = localStorage.getItem(LOCAL_KEY);
+    const arr: DishRating[] = raw ? JSON.parse(raw) : [];
+    // Basic validation
+    return Array.isArray(arr) ? arr.filter((r) => !!r && !!r.dishId && !!r.restaurantId) : [];
+  } catch {
+    return [];
+  }
 }
   

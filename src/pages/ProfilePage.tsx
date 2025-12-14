@@ -13,6 +13,8 @@ import {
 import { Star, MapPin, Clock } from "lucide-react";
 import { RatingDoc, fetchRatingsByUser } from "../services/ratings";
 import { DishRating, getAllDishRatings } from "../services/dishRating";
+import { restaurants as staticRestaurants } from "../data/Restaurants";
+import { dishes as staticDishes } from "../data/Dish";
 
 interface RestaurantMeta {
   id: string;
@@ -55,16 +57,18 @@ export function ProfilePage({
 
   const restaurantNameById = useMemo(() => {
     const map = new Map<string, RestaurantMeta>();
-    for (const r of restaurants) {
-      map.set(r.id, r);
+    const source = restaurants.length ? restaurants : staticRestaurants;
+    for (const r of source) {
+      map.set(r.id, r as RestaurantMeta);
     }
     return map;
   }, [restaurants]);
 
   const dishNameById = useMemo(() => {
     const map = new Map<string, DishMeta>();
-    for (const d of dishes) {
-      map.set(d.id, d);
+    const source = dishes.length ? dishes : staticDishes;
+    for (const d of source) {
+      map.set(d.id, d as DishMeta);
     }
     return map;
   }, [dishes]);
