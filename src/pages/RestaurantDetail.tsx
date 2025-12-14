@@ -289,9 +289,9 @@ export function RestaurantDetails({ restaurant, onBack }: { restaurant: Restaura
             </CardHeader>
             <CardContent>
               <ul className="list-disc space-y-1 pl-5 text-gray-700">
-                <li>Walk-ins welcome</li>
-                <li>Family friendly</li>
-                <li>Takeout available</li>
+                {restaurant.goodToKnow.map((tip, index) => (
+                  <li key={index}>{tip}</li>
+                ))}
               </ul>
             </CardContent>
           </Card>
