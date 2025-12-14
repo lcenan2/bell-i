@@ -343,7 +343,10 @@ export function LandingPage({
                   tabIndex={0}
                 >
                   {/* IMAGE column (fixed width on md+) */}
-                  <div className="h-40 md:h-40 w-full overflow-hidden">
+                  <div
+                    className="w-full overflow-hidden flex-shrink-0"
+                    style={{ aspectRatio: '16/9' }}
+                  >
                     <ImageWithFallback
                       src={r.imageUrl}
                       alt={`${r.name} cover`}

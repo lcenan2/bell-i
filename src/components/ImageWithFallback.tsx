@@ -8,7 +8,7 @@ const ERROR_IMG_SRC =
   
     const { src, alt, className = '', ...rest } = props;
     // Don't force a fixed height here — allow parent classes to control sizing.
-    const defaultClasses = 'w-full object-cover bg-gray-100 transition-transform duration-300';
+    const defaultClasses = 'w-full h-full object-cover bg-gray-100 transition-transform duration-300';
 
     // If no src is provided or it's an empty/invalid string, immediately render a placeholder instead of attempting to load.
     const isMissingSrc = !src || (typeof src === 'string' && (!src.trim() || src.trim().toLowerCase() === 'null' || src.trim().toLowerCase() === 'undefined'));
