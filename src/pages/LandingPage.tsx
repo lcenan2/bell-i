@@ -150,14 +150,14 @@ export function LandingPage({
               </a>
 
               {isLoggedIn ? (
-                <div>
-                  <span>Hi, {userName}</span>
-                  <button onClick={onOpenProfile} style={{ margin: '0 10px', padding: '10px', backgroundColor: 'blue', color: 'white' }}>
+                <div className="flex items-center gap-2">
+                  {userName && <span className="text-sm text-gray-700 hidden sm:inline">Hi, {userName}</span>}
+                  <Button variant="ghost" onClick={onOpenProfile} aria-label="Open profile and rating history">
                     Profile
-                  </button>
-                  <button onClick={onLogout} style={{ margin: '0 10px', padding: '10px', backgroundColor: 'red', color: 'white' }}>
+                  </Button>
+                  <Button variant="ghost" onClick={onLogout} aria-label="Logout">
                     Logout
-                  </button>
+                  </Button>
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
@@ -216,15 +216,13 @@ export function LandingPage({
       {/* Featured Restaurants */}
       <section className="section" aria-labelledby="featured-heading">
         <div className="landing-container">
-          <div className="flex flex-col gap-4 mb-6 md:flex-row md:items-end md:justify-between">
-            <div>
-              <h2 id="featured-heading" className="section-title mb-1">
-                Featured Restaurants
-              </h2>
-              <p className="text-sm text-gray-500">
-                Filter by cuisine, price, and rating.
-              </p>
-            </div>
+          <div className="mb-6">
+            <h2 id="featured-heading" className="section-title mb-1">
+              Featured Restaurants
+            </h2>
+            <p className="text-sm text-gray-500 mb-4">
+              Filter by cuisine, price, and rating.
+            </p>
 
             {/* FILTER BAR */}
             <div className="flex flex-wrap gap-3">
