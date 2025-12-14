@@ -11,11 +11,12 @@ import { Button } from '../components/Button'
 import { ImageWithFallback } from '../components/ImageWithFallback'
 import { MapPin, Star, DollarSign, ArrowLeft } from 'lucide-react'
 import RatingForm from '../components/RatingForm'
-import { fetchRatings, saveRating, computeAverages } from '../services/ratings'
+import { fetchRatings, saveRating, computeAverages, fetchReviewsWithComments } from '../services/ratings'
 import { saveDishRating, subscribeToDishRatings, getDishStatsForRestaurant, fetchDishRatingsForRestaurant } from '../services/dishRating'
 import { collection, getDocs } from 'firebase/firestore'
 import { db } from '../firebase'
 import { dishes as localDishes } from '../data/Dish'
+import { ReviewsList } from '../components/ReviewsList'
 
 interface MenuItem {
   id: string
@@ -33,9 +34,10 @@ interface DishStats {
   count: number
 }
 
-export function RestaurantDetails({ restaurant, onBack }: { restaurant: Restaurant; onBack: () => void }) {
+export function RestaurantDetails({ restaurant, onBack, userId, username }: { restaurant: Restaurant; onBack: () => void; userId?: string; username?: string }) {
   const [loading, setLoading] = useState(true)
   const [ratings, setRatings] = useState<any[]>([])
+  const [reviews, setReviews] = useState<any[]>([])
   const [menu, setMenu] = useState<MenuItem[]>([])
   const [dishRatings, setDishRatings] = useState<any[]>([])
   const stats = useMemo(() => computeAverages(ratings), [ratings])
@@ -100,6 +102,8 @@ export function RestaurantDetails({ restaurant, onBack }: { restaurant: Restaura
       try {
         // Fetch restaurant ratings
         const rs = await fetchRatings(restaurant.id)
+        // Fetch reviews with comments
+        const reviewData = await fetchReviewsWithComments(restaurant.id)
         // Fetch menu items from Firebase
         const menuItemsRef = collection(db, 'restaurants', restaurant.id, 'menuItems')
         const menuSnapshot = await getDocs(menuItemsRef)
@@ -128,6 +132,7 @@ export function RestaurantDetails({ restaurant, onBack }: { restaurant: Restaura
 
         if (mounted) {
           setRatings(rs)
+          setReviews(reviewData)
           setMenu(finalMenu)
           setLoading(false)
         }
@@ -147,10 +152,15 @@ export function RestaurantDetails({ restaurant, onBack }: { restaurant: Restaura
   async function handleSubmit(values: any) {
     await saveRating({
       restaurantId: restaurant.id,
+      userId: userId,
+      username: username,
       ...values,
     })
     const rs = await fetchRatings(restaurant.id)
     setRatings(rs)
+    // Refresh reviews to show the new comment if added
+    const reviewData = await fetchReviewsWithComments(restaurant.id)
+    setReviews(reviewData)
   }
 
   async function handleDishRate(menuItemId: string, value: number) {
@@ -279,6 +289,8 @@ export function RestaurantDetails({ restaurant, onBack }: { restaurant: Restaura
               <RatingForm onSubmit={handleSubmit} busy={loading} />
             </CardContent>
           </Card>
+
+          <ReviewsList reviews={reviews} />
 
           <Card>
             <CardHeader>
