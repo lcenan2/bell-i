@@ -201,6 +201,9 @@ a:hover {
 .flex {
   display: flex;
 }
+.flex-col {
+  flex-direction: column;
+}
 .items-center {
   align-items: center;
 }
@@ -345,6 +348,12 @@ a:hover {
 .text-gray-700 {
   color: var(--gray-700);
 }
+.text-gray-500 {
+  color: #6b7280;
+}
+.text-muted-foreground {
+  color: #6b7280;
+}
 
 /* Simple card content centering in some lists */
 .text-left {
@@ -391,6 +400,10 @@ a:hover {
 .border { border: 1px solid var(--border); }
 .rounded { border-radius: 0.375rem; }
 
+/* Card defaults used by Card component */
+.bg-card { background-color: #ffffff; }
+.text-card-foreground { color: var(--foreground); }
+
 /* grid spans */
 .md\:col-span-2 { }
 @media (min-width: 768px) {
@@ -400,6 +413,7 @@ a:hover {
 /* spacing between children */
 .space-y-2 > * + * { margin-top: 0.5rem; }
 .space-y-4 > * + * { margin-top: 1rem; }
+.space-y-3 > * + * { margin-top: 0.75rem; }
 
 /* lists */
 .list-disc { list-style-type: disc; }
