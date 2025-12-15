@@ -5,7 +5,7 @@ import { dishes } from '../data/Dish';
 
 export async function uploadAllData() {
   try {
-    console.log('🚀 Starting data upload...');
+    console.log('Starting data upload...');
 
     for (const restaurant of restaurants) {
       const restaurantRef = doc(db, 'restaurants', restaurant.id);
@@ -22,15 +22,14 @@ export async function uploadAllData() {
         createdAt: new Date()
       });
 
-      console.log(`✅ Added restaurant: ${restaurant.name}`);
+      console.log(`Added restaurant: ${restaurant.name}`);
 
-      // Filter dishes safely, converting IDs to strings to avoid type mismatches
       const restaurantDishes = dishes.filter(
         d => String(d.restaurantId).trim() === String(restaurant.id).trim()
       );
 
       if (restaurantDishes.length === 0) {
-        console.warn(`⚠️ No dishes found for ${restaurant.name}`);
+        console.warn(`No dishes found for ${restaurant.name}`);
         continue;
       }
 
@@ -50,14 +49,14 @@ export async function uploadAllData() {
           });
           console.log(`   🍽 Added dish: ${dish.name}`);
         } catch (dishError) {
-          console.error(`   ❌ Failed to add dish ${dish.name}:`, dishError);
+          console.error(`Failed to add dish ${dish.name}:`, dishError);
         }
       }
 
-      console.log(`✅ Added ${restaurantDishes.length} menu items for ${restaurant.name}`);
+      console.log(`Added ${restaurantDishes.length} menu items for ${restaurant.name}`);
     }
 
-    console.log('🎉 All data uploaded successfully!');
+    console.log('All data uploaded successfully!');
     alert('Data uploaded! Check Firebase Console.');
   } catch (error) {
     console.error('Error uploading data:', error);
